@@ -35,7 +35,7 @@ test("baseName handles POSIX, Windows, trailing slashes and file URIs", () => {
 test("parseHubArgs: env defaults and flags", () => {
   const d = parseHubArgs([], {});
   assert.equal(d.port, 17826);
-  assert.equal(d.robot, "http://tiny-engineer.local");
+  assert.equal(d.robot, "http://vibebot.local");
   assert.equal(d.token, null);
   assert.equal(d.clearOnStart, true);
 

@@ -3,20 +3,22 @@ import { animationForEvent } from "./map.js";
 import { postAnim } from "./post.js";
 
 function printHelp() {
-  console.log(`Usage: tiny-engineer-claude-code [options]
+  console.log(`Usage: vibebot-claude-code [options]
 
 Claude Code hook helper: read event JSON from stdin, pick an animation, POST to the robot.
 
 Options:
-  --url <base>   Robot base URL (default: TINY_ENGINEER_URL, else ${DEFAULT_URL})
+  --url <base>   Robot base URL (default: VIBEBOT_URL, else ${DEFAULT_URL})
   -h, --help     Show this help
 
 Auth:
-  If TINY_ENGINEER_TOKEN is set (process env or project-root .env), requests
+  If VIBEBOT_TOKEN is set (process env or project-root .env), requests
   send Authorization: Bearer <token>. Must match the device access_token.
   No token → no Authorization header (device auth disabled).
-  A token from the process env is never sent to a TINY_ENGINEER_URL taken from
+  A token from the process env is never sent to a VIBEBOT_URL taken from
   the project .env; set the URL in the env or with --url instead.
+  TINY_ENGINEER_TOKEN / TINY_ENGINEER_URL are still read as deprecated
+  fallbacks when the VIBEBOT_* names are unset.
 
 Hook mode (no animation args):
   Claude Code pipes JSON with hook_event_name (plus tool_name for PreToolUse and
@@ -45,8 +47,8 @@ Event map:
   StopFailure                                      → error
 
 Examples:
-  echo '{"hook_event_name":"Stop"}' | tiny-engineer-claude-code
-  echo '{"hook_event_name":"PreToolUse","tool_name":"Read"}' | tiny-engineer-claude-code --url http://192.168.1.10
+  echo '{"hook_event_name":"Stop"}' | vibebot-claude-code
+  echo '{"hook_event_name":"PreToolUse","tool_name":"Read"}' | vibebot-claude-code --url http://192.168.1.10
 `);
 }
 

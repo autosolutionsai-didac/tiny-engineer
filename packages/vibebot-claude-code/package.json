@@ -1,0 +1,22 @@
+{
+  "name": "vibebot-claude-code",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Claude Code hooks CLI that drives Vibe Bot robot animations over HTTP",
+  "main": "src/cli.js",
+  "bin": {
+    "vibebot-claude-code": "./bin/vibebot-claude-code.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "files": [
+    "bin",
+    "src"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["claude-code", "robot", "vibebot"],
+  "license": "MIT"
+}

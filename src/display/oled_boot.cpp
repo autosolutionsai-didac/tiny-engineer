@@ -57,7 +57,7 @@ void showBootProgress(
   display.setTextSize(1);
 
   display.setCursor(0, 0);
-  display.println("TINY ENGINEER");
+  display.println("VIBE BOT");
 
   display.setCursor(0, 11);
   display.print(label);

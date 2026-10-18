@@ -2,178 +2,152 @@
 
 Build the harness **on the desk** ([getting-started](../getting-started.md) — after print, before flash). Do not seat it in the chest until [assembly §12](../3d/assembly.md#12-electronics-inside-the-desk).
 
+Source of truth for pins: [`include/pins.h`](../../include/pins.h) / [pinout.md](pinout.md). This page describes the default **Seeed Studio XIAO ESP32S3** build; the legacy ESP32-C3-Zero harness is in [Legacy: ESP32-C3-Zero](#legacy-esp32-c3-zero). A XIAO wiring diagram is TBD; the existing diagram [`docs/wiring/legacy-c3-zero.drawio.png`](../wiring/legacy-c3-zero.drawio.png) ([`.drawio`](../wiring/legacy-c3-zero.drawio)) shows the legacy C3 harness only.
+
 **Why these nets exist:**
 
-- Two voltage rails: **5 V** for servos and the amp; **3.3 V** for ESP32 GPIO, PCA9685 **VCC**, and OLED. Never jumper those together.
+- Two voltage rails: **5 V** for servos, the amp, the LED chain and the level shifter; **3.3 V** for ESP32 GPIO, PCA9685 **VCC**, and OLED. Never jumper those together.
 - PCA9685 **VCC** is logic; **V+** is servo power. Same chip, two jobs.
 - OLED and PCA9685 share one I2C bus (SDA/SCL).
 - Audio is I2S into the MAX98357A; the speaker is **BTL** — **SPK− is not ground**.
+- The WS2812B chain runs from 5 V, so its 3.3 V data line goes through a **74AHCT1G125** level shifter.
+- Robot power comes from its **own USB-C power input** (5 V / 3 A), joined to the XIAO **5V** pin through an **SS14** Schottky. The XIAO's onboard USB-C is for flashing / serial only.
 - Every module shares **GND**.
 
 **Connect in this order (power last):**
 
 1. Common **GND** to every module.
-2. Signal wires: I2C (SDA/SCL), I2S (BCLK/LRC/DIN), USB D+/D−, PCA9685 OE if you use it.
-3. Logic **3V3**: ESP32 **3V3** → PCA9685 **VCC** and OLED **VCC**.
-4. **5 V** last: USB VBUS → ESP32 **5V**, PCA9685 **5V**, MAX98357A **Vin**. Leave servo leads unplugged until centering.
+2. Signal wires: I2C (D4/D5), I2S (D8/D9/D10), PCA9685 **OE** (D3), LED data (D0 → 74AHCT1G125 → 330 Ω → first WS2812B **DIN**).
+3. Logic **3V3**: XIAO **3V3** → PCA9685 **VCC** and OLED **VCC**.
+4. **5 V** last: power-input **VBUS** → +5V rail → PCA9685 **V+**, MAX98357A **Vin**, WS2812B **5V**, 74AHCT1G125 **VCC**, 470 µF bulk cap, and SS14 anode (cathode → XIAO **5V**). Leave servo leads unplugged until centering.
 
-Source of truth for *what is connected to what*: [`docs/wiring/Tiny Engineer.drawio.png`](../wiring/Tiny%20Engineer.drawio.png) ([`.drawio`](../wiring/Tiny%20Engineer.drawio)).
-
-Firmware GPIO numbers: [`include/pins.h`](../../include/pins.h) / [pinout.md](pinout.md). Diagram labels pads **GP0**…**GP21**; those are the same pins as GPIO0…GPIO21.
-
-Diagram colour: **red** = 5 V, **blue** = GND, thin wires = signals.
-
-## Pin names as drawn
-
-| Diagram label | Same net / meaning |
-| --- | --- |
-| USB **5V** | +5V rail (Adafruit 5993 **VBUS**) |
-| USB **GND** | Common **GND** |
-| USB **D−** / **D+** | 5993 data → ESP32 **GP18** / **GP19** (may be omitted on PNG) |
-| ESP32 **GP0** | GPIO0, I2C **SDA** |
-| ESP32 **GP1** | GPIO1, I2C **SCL** |
-| ESP32 **GP2** | GPIO2, I2S **BCLK** |
-| ESP32 **GP3** | GPIO3, I2S **WS/LRC** |
-| ESP32 **GP4** | GPIO4, I2S **DIN** |
-| PCA9685 **5V** | Servo-power *input* from USB 5V |
-| PCA9685 **V+** | Servo-power *output* to servo 5V |
-| PCA9685 **VCC** | Logic **3V3** |
-| OLED **SCL** | I2C **SCL** (Waveshare silkscreen; PNG may say **SCK**) |
-| MAX98357A **Vin** | Amp **+5V** (**VIN**) |
-| MAX98357A **LRC** | **WS/LRC** |
-
-On Adafruit PCA9685, header/terminal **V+** is normally the same servo rail as the diagram’s PCA9685 **5V** pad. Do **not** treat PCA9685 **5V** as **VCC**.
-
-## Connection table (as drawn)
+## Connection table (XIAO ESP32S3)
 
 | From | Pin | To | Pin | Purpose |
 | --- | --- | --- | --- | --- |
-| USB (5993) | 5V / VBUS | ESP32-C3-Zero | 5V | Board 5 V in |
-| USB (5993) | 5V / VBUS | PCA9685 | 5V | Servo-rail in |
-| USB (5993) | 5V / VBUS | MAX98357A | Vin | Amp power |
-| USB (5993) | GND | ESP32-C3-Zero | GND | Common ground |
-| USB (5993) | GND | PCA9685 | GND (logic/header side) | Common ground |
-| USB (5993) | GND | OLED | GND | Common ground |
-| USB (5993) | GND | MAX98357A | GND | Common ground |
-| USB (5993) | D− | ESP32-C3-Zero | GP18 | Native USB D− (flash / CDC) |
-| USB (5993) | D+ | ESP32-C3-Zero | GP19 | Native USB D+ (flash / CDC) |
-| ESP32-C3-Zero | 3V3 | PCA9685 | VCC | PCA9685 logic |
-| ESP32-C3-Zero | 3V3 | OLED | VCC | OLED power |
-| ESP32-C3-Zero | GP0 | PCA9685 | SDA | I2C data |
-| ESP32-C3-Zero | GP0 | OLED | SDA | I2C data (shared) |
-| ESP32-C3-Zero | GP1 | PCA9685 | SCL | I2C clock |
-| ESP32-C3-Zero | GP1 | OLED | SCL | I2C clock (shared; Waveshare silkscreen **SCL**; PNG may say **SCK**) |
-| ESP32-C3-Zero | GP2 | MAX98357A | BCLK | I2S bit clock |
-| ESP32-C3-Zero | GP3 | MAX98357A | LRC | I2S word select |
-| ESP32-C3-Zero | GP4 | MAX98357A | DIN | I2S data |
-| PCA9685 | PWM | Servo | SIG | Servo PWM |
-| PCA9685 | V+ | Servo | 5V | Servo power |
-| PCA9685 | GND (servo side) | Servo | GND | Servo ground |
+| Power-input USB-C | VBUS | +5V rail | — | Robot 5 V / 3 A in |
+| Power-input USB-C | GND | GND | — | Common ground |
+| +5V rail | — | SS14 | anode | XIAO feed |
+| SS14 | cathode | XIAO ESP32S3 | 5V | XIAO power in (no back-feed between the two USB-C ports) |
+| +5V rail | — | 470 µF capacitor | + | Bulk decoupling near PCA9685 V+ (− to GND) |
+| +5V rail | — | PCA9685 | V+ (terminal block) | Servo rail |
+| +5V rail | — | MAX98357A | Vin | Amp power |
+| +5V rail | — | 74AHCT1G125 | VCC | Level-shifter power |
+| +5V rail | — | WS2812B chain | 5V | LED power |
+| XIAO ESP32S3 | 3V3 | PCA9685 | VCC | PCA9685 logic |
+| XIAO ESP32S3 | 3V3 | OLED | VCC | OLED power |
+| XIAO ESP32S3 | D4 / GPIO5 | PCA9685, OLED | SDA | I2C data (shared) |
+| XIAO ESP32S3 | D5 / GPIO6 | PCA9685, OLED | SCL | I2C clock (shared) |
+| XIAO ESP32S3 | D3 / GPIO4 | PCA9685 | OE | Output enable (active low) |
+| XIAO ESP32S3 | D8 / GPIO7 | MAX98357A | BCLK | I2S bit clock |
+| XIAO ESP32S3 | D9 / GPIO8 | MAX98357A | LRC | I2S word select |
+| XIAO ESP32S3 | D10 / GPIO9 | MAX98357A | DIN | I2S data |
+| XIAO ESP32S3 | D0 / GPIO1 | 74AHCT1G125 | A (input) | LED data, 3.3 V |
+| 74AHCT1G125 | OE̅ | GND | — | Buffer always enabled |
+| 74AHCT1G125 | Y (output) | 330 Ω → WS2812B #0 | DIN | LED data, 5 V |
+| WS2812B #n | DOUT | WS2812B #n+1 | DIN | Chain: #0 lamp, #1–#8 session bar |
+| PCA9685 | PWM 0–4 | Servos | SIG | Servo PWM |
+| PCA9685 | V+ | Servos | 5V | Servo power |
+| PCA9685 | GND (servo side) | Servos | GND | Servo ground |
+| MAX98357A | SPK+ / SPK− | Speaker | + / − | BTL output (never to GND) |
 
-**All modules must share a common ground.** USB GND is the star in the drawing (ESP32, PCA9685 header, OLED, MAX98357A). Servo GND returns through PCA9685 servo-side GND, which is the same ground net.
+**All modules must share a common ground**, including the XIAO, the power input, the level shifter and the LED chain.
 
 > [!WARNING]
-> Never power the servos from the ESP32 3.3 V regulator. Diagram: servo **5V** ← PCA9685 **V+**; PCA9685 **VCC** ← ESP32 **3V3** only.
+> Never power the servos from the XIAO 3.3 V regulator, and do not power the robot from the XIAO's own USB-C port.
 
-## Power (as drawn)
-
-```
-USB 5V
-  → ESP32 5V
-  → PCA9685 5V
-  → MAX98357A Vin
-
-PCA9685 V+
-  → Servo 5V
-```
+## Power
 
 ```
-ESP32 3V3
+Power-input USB-C VBUS (5 V / 3 A)
+  → +5V rail
+      → PCA9685 V+ → servos 5V
+      → MAX98357A Vin
+      → 74AHCT1G125 VCC
+      → WS2812B chain 5V
+      → 470 µF bulk cap (to GND)
+      → SS14 (anode) → (cathode) XIAO 5V
+```
+
+```
+XIAO 3V3
   → PCA9685 VCC
   → OLED VCC
 ```
 
-```
-USB GND
-  → ESP32 GND
-  → PCA9685 GND (header)
-  → OLED GND
-  → MAX98357A GND
+Budget and rationale: [power.md](power.md).
 
-PCA9685 GND (servo header)
-  → Servo GND
-```
+## I2C
 
-USB block in the drawing is the Adafruit **5993** — robot **power** (VBUS/GND) and, when wired, **programming** (D+/D− → GP19/GP18). The PNG may show only 5V/GND; data wires are required for the single-USB design. See [interfaces.md](interfaces.md).
+Shared bus: XIAO **D4 / GPIO5** → SDA, **D5 / GPIO6** → SCL, to both PCA9685 and OLED. Addresses: PCA9685 `0x40`, OLED `0x3C`. See [interfaces.md](interfaces.md).
 
-## I2C (as drawn)
+## I2S
 
-Shared bus:
+- XIAO **D8 / GPIO7** → MAX98357A **BCLK**
+- XIAO **D9 / GPIO8** → MAX98357A **LRC**
+- XIAO **D10 / GPIO9** → MAX98357A **DIN**
+- +5V → MAX98357A **Vin**; GND → **GND**
 
-- ESP32 **GP0** → PCA9685 **SDA** and OLED **SDA**
-- ESP32 **GP1** → PCA9685 **SCL** and OLED **SCL**
+MAX98357A **GAIN** / **SD** not wired (breakout defaults).
 
-Addresses (firmware, not on the drawing): PCA9685 `0x40`, OLED `0x3C`. See [interfaces.md](interfaces.md).
+## LED chain
 
-## I2S (as drawn)
+9 × WS2812B in one chain: index **0** = desk lamp, **1–8** = session bar (`LED_CHAIN_LENGTH = 9`, `LED_BAR_FIRST_INDEX = 1`, `LED_BAR_LENGTH = 8`).
 
-- ESP32 **GP2** → MAX98357A **BCLK**
-- ESP32 **GP3** → MAX98357A **LRC**
-- ESP32 **GP4** → MAX98357A **DIN**
-- USB **5V** → MAX98357A **Vin**
-- USB **GND** → MAX98357A **GND**
+- XIAO **D0 / GPIO1** → 74AHCT1G125 input. The AHCT input threshold accepts 3.3 V logic; the output swings to 5 V for the LEDs.
+- 330 Ω series resistor between the level-shifter output and the first LED's **DIN**, placed near the first LED.
+- Tie 74AHCT1G125 **OE̅** to GND.
+- Power every LED from +5V / GND; add a 100 nF decoupling cap per LED if your strip or modules do not already have one.
 
-Drawn MAX98357A pads: **Vin**, **GND**, **BCLK**, **LRC**, **DIN** only.
+## PCA9685 → servo
 
-## PCA9685 → servo (as drawn)
+Firmware drives **channels 0–4** (`SERVO_SPECS` / `SERVO_HEAD`…`SERVO_BODY`). Channel → joint: [robot-movement.md](../robot-movement.md) / [`include/servos.h`](../../include/servos.h). Each servo: SIG ← PWM, 5V ← V+, GND ← GND.
 
-One generic **Servo** block:
+PCA9685 **OE** is wired to **D3 / GPIO4** on the XIAO build (`PCA9685_OE_WIRED = true`): firmware holds outputs off until neutral pulses are loaded — [pinout.md](pinout.md#oe-behaviour).
 
-| Servo | PCA9685 |
-| --- | --- |
-| SIG | PWM |
-| 5V | V+ |
-| GND | GND |
-
-Firmware drives **channels 0–4** (`SERVO_SPECS` / `SERVO_HEAD`…`SERVO_BODY`). The drawing does not number the PWM header. Channel → joint: [robot-movement.md](../robot-movement.md) / [`include/servos.h`](../../include/servos.h).
-
-## Pads drawn with no wires
-
-ESP32-C3-Zero, unused in the PNG:
-
-**GP5, GP6, GP7, GP8, GP9, GP10, GP20, GP21**
-
-GP5 is reserved for PCA9685 OE (`PCA9685_OE_PIN`) but that net is **pending**: schematic and PCB do not implement or validate GP5→OE yet (`PCA9685_OE_WIRED = false`). GP9 = BOOT, GP10 = onboard WS2812. GP18/GP19 = native USB — wire from 5993 D−/D+ even if the base PNG omits them. See [pinout.md](pinout.md).
-
-PCA9685 **OE** is not wired on this board. MAX98357A **GAIN** / **SD** not wired (breakout defaults). **SPK+** / **SPK-** not drawn.
-
-## Not on the drawing
-
-Still part of the selected hardware; do not invent extra ESP32 GPIO for them.
+## Not wired
 
 | Item | Rule |
 | --- | --- |
-| Speaker | Terminals → MAX98357A **SPK+** and **SPK-** only |
-| 4 extra analog micro servos | Same 3-wire pattern as the drawn servo, on PCA9685 PWM 0–4 |
-| Adafruit 5993 D+/D− | Wire to ESP32 **GP19** / **GP18** for flash and CDC (single-USB design) |
-| MAX98357A GAIN / SD | Not wired; leave breakout defaults |
+| XIAO D1 / GPIO2 | Reserved for a future touch pad / button |
+| XIAO D2 / GPIO3 | Strapping pin — leave unused |
+| XIAO D6 / D7 (GPIO43/44) | UART0, free |
+| MAX98357A GAIN / SD | Leave breakout defaults |
 
 > [!WARNING]
 > MAX98357A output is BTL. **SPK- is not ground.** Never tie SPK- or SPK+ to GND. Never drive the speaker from ESP32 GPIO.
 
-## USB connector (single)
+## USB connectors
 
 | Connector | Role |
 | --- | --- |
-| Adafruit **5993** | Only robot USB-C: **VBUS/GND** (power) + **D+/D−** → GP19/GP18 (flash / serial CDC) |
-| ESP32-C3-Zero onboard USB-C | Leave **unused** when 5993 data is wired (avoids dual 5 V feed) |
+| Power-input USB-C (power-only breakout) | Robot **+5V** / GND, 5 V / 3 A |
+| XIAO ESP32S3 onboard USB-C | Flash and serial CDC only |
 
-See [interfaces.md](interfaces.md), [power.md](power.md).
+Both can be plugged in at once: the SS14 keeps the XIAO's USB VBUS off the servo rail. See [interfaces.md](interfaces.md), [power.md](power.md).
 
 ## Assembly checks
 
-1. Every **GND** in the PNG is one net (USB, ESP32, PCA9685 both sides, OLED, MAX98357A, servo).
-2. PCA9685 **VCC** ≈ 3.3 V, PCA9685 **5V** / **V+** ≈ 5 V, those two nets **not** shorted.
-3. OLED clock wire lands on Waveshare **SCL** (PNG may still say **SCK**).
-4. I2S is GP2/GP3/GP4 → BCLK/LRC/DIN, not swapped with I2C.
-5. Speaker (if fitted) is only SPK+/SPK-, which are **not** in the PNG.
+1. Every **GND** is one net (power input, XIAO, PCA9685 both sides, OLED, MAX98357A, level shifter, LEDs, servos).
+2. PCA9685 **VCC** ≈ 3.3 V, PCA9685 **V+** ≈ 5 V, those two nets **not** shorted.
+3. XIAO **5V** pad ≈ 4.6 V (rail minus the SS14 drop) with only the power input connected.
+4. I2S on D8/D9/D10 and I2C on D4/D5 — not swapped.
+5. LED data goes D0 → 74AHCT1G125 → 330 Ω → first LED **DIN** (not DOUT).
+6. 470 µF capacitor polarity: + to +5V.
+7. Speaker (if fitted) is only SPK+/SPK-.
+
+## Legacy: ESP32-C3-Zero
+
+Build with `pio run -e esp32-c3-devkitm-1`. Diagram: [`docs/wiring/legacy-c3-zero.drawio.png`](../wiring/legacy-c3-zero.drawio.png). The diagram labels pads **GP0**…**GP21** (= GPIO0…GPIO21). **Red** = 5 V, **blue** = GND, thin wires = signals.
+
+| From | Pin | To | Pin | Purpose |
+| --- | --- | --- | --- | --- |
+| USB (5993) | 5V / VBUS | ESP32-C3-Zero, PCA9685, MAX98357A | 5V, 5V, Vin | +5V rail |
+| USB (5993) | GND | every module | GND | Common ground |
+| USB (5993) | D− / D+ | ESP32-C3-Zero | GP18 / GP19 | Native USB (flash / CDC); may be omitted on the PNG |
+| ESP32-C3-Zero | 3V3 | PCA9685, OLED | VCC | Logic power |
+| ESP32-C3-Zero | GP0 / GP1 | PCA9685, OLED | SDA / SCL | I2C (OLED PNG may say **SCK**) |
+| ESP32-C3-Zero | GP2 / GP3 / GP4 | MAX98357A | BCLK / LRC / DIN | I2S |
+| PCA9685 | PWM / V+ / GND | Servo | SIG / 5V / GND | Servos |
+
+Onboard WS2812 on **GP10** is the only LED (no session bar). PCA9685 **OE** (GP5) is pending (`PCA9685_OE_WIRED = false`). GP9 = BOOT. Leave the C3-Zero onboard USB-C unused when 5993 data is wired. On Adafruit PCA9685, the diagram's PCA9685 **5V** pad is the servo rail (same as **V+**), not **VCC**.

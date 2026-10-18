@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Power and pin facts live in [docs/hardware/](https://github.com/jamro/tiny-engineer/blob/main/docs/hardware/README.md).
+        Power and pin facts live in [docs/hardware/](https://github.com/autosolutionsai-didac/tiny-engineer/blob/main/docs/hardware/README.md).
         Do not power servos from the ESP32 3.3 V LDO. PCA9685 **VCC** = 3.3 V logic; **V+** = 5 V servo rail.
   - type: input
     id: supply

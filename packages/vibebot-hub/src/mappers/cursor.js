@@ -1,7 +1,7 @@
 import { activityForTool, baseName, firstString } from "../util.js";
 
 /**
- * Cursor hook → session update. Mirrors packages/tiny-engineer-cursor/src/map.js:
+ * Cursor hook → session update. Mirrors packages/vibebot-cursor/src/map.js:
  * reading/typing/thinking poses become working + activity, stop becomes
  * idle (or error for status=error).
  */

@@ -2,13 +2,13 @@
 
 JSON HTTP server on the ESP32 (XIAO ESP32S3 default target; ESP32-C3-Zero legacy). Source: [`src/http/http_server.cpp`](../src/http/http_server.cpp) and handlers under [`src/http/`](../src/http/), test routes in [`src/http/test_handlers.cpp`](../src/http/test_handlers.cpp).
 
-Listens on **port 80** after STA Wi-Fi connects, or during setup AP mode at `http://192.168.4.1/`. Base URL is the board IP (OLED / serial) or `http://tiny-engineer.local` (mDNS, 2.4 GHz only).
+Listens on **port 80** after STA Wi-Fi connects, or during setup AP mode at `http://192.168.4.1/`. Base URL is the board IP (OLED / serial) or `http://vibebot.local` (mDNS, 2.4 GHz only).
 
 Optional auth: when an `access_token` is configured in settings, all JSON API routes require `Authorization: Bearer <token>`. Empty token (default) means no auth. `GET /auth` is always public and reports whether auth is required. Missing/wrong token → **401** `{"ok":false,"error":"unauthorized"}`. HTML panel routes stay public (the UI prompts for the token). `Content-Type: application/json`. CORS: `Access-Control-Allow-Origin: *`, `Access-Control-Allow-Headers: Authorization`.
 
 When WiFi credentials are not saved yet, control APIs (`/anim`, `/session`, `/sessions`, `/sessions/clear`, `/test/*`) return **503** `{"ok":false,"error":"wifi not configured"}`. Setup routes (`/`, `/config`, `/auth`, `/health`, `/settings`, `/setup/servo`, `/setup/led`, `/setup/audio`, `/setup/oled`) stay available on the setup AP.
 
-If boot WiFi credentials are missing, the device opens setup AP mode (`TinyEngineer-XXXX`) and serves a five-step setup wizard at `/config` (servo calibration, OLED orientation, RGB LED, speaker test, then Wi-Fi). If saved credentials fail, it reopens setup AP mode. Hardware tests: [`docs/hardware/testing.md`](hardware/testing.md). How to wire this API into AI tools: [`integration.md`](integration.md).
+If boot WiFi credentials are missing, the device opens setup AP mode (`VibeBot-XXXX`) and serves a five-step setup wizard at `/config` (servo calibration, OLED orientation, RGB LED, speaker test, then Wi-Fi). If saved credentials fail, it reopens setup AP mode. Hardware tests: [`docs/hardware/testing.md`](hardware/testing.md). How to wire this API into AI tools: [`integration.md`](integration.md).
 
 Firmware answers mDNS A and AAAA (IPv6 link-local) so macOS does not wait 2–3s on a missing AAAA. If a client still pauses on the hostname, force IPv4 (`curl -4`). The IP on the OLED skips DNS entirely.
 
@@ -21,7 +21,7 @@ HTML endpoint index. Lists all routes plus supported parameters for `/anim`, `/s
 Open in a browser:
 
 ```bash
-curl http://tiny-engineer.local/
+curl http://vibebot.local/
 ```
 
 Returns `Content-Type: text/html; charset=utf-8`.
@@ -31,7 +31,7 @@ Returns `Content-Type: text/html; charset=utf-8`.
 Whether API auth is required. Always public. Safe, no hardware side effects. Does not reveal the token.
 
 ```bash
-curl http://tiny-engineer.local/auth
+curl http://vibebot.local/auth
 ```
 
 ```json
@@ -50,8 +50,8 @@ curl http://tiny-engineer.local/auth
 Health. Safe, no hardware side effects. Uses live `WiFi.status()`, not the boot-time flag. Requires Bearer when auth is enabled.
 
 ```bash
-curl http://tiny-engineer.local/health
-curl -H "Authorization: Bearer YOUR_TOKEN" http://tiny-engineer.local/health
+curl http://vibebot.local/health
+curl -H "Authorization: Bearer YOUR_TOKEN" http://vibebot.local/health
 ```
 
 ```json
@@ -65,7 +65,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" http://tiny-engineer.local/health
     "connected": true,
     "ip": "192.168.1.10",
     "rssi": -42,
-    "hostname": "tiny-engineer.local"
+    "hostname": "vibebot.local"
   },
   "wifi_configured": true,
   "provisioning": false,
@@ -85,7 +85,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" http://tiny-engineer.local/health
 | `wifi.connected` | `WiFi.status() == WL_CONNECTED` |
 | `wifi.ip` | STA IPv4, or `""` if down |
 | `wifi.rssi` | dBm, or `0` if down |
-| `wifi.hostname` | mDNS name from settings (`{hostname}.local`, default `tiny-engineer.local`) |
+| `wifi.hostname` | mDNS name from settings (`{hostname}.local`, default `vibebot.local`) |
 | `wifi_configured` | `true` when WiFi credentials are saved in NVS |
 | `provisioning` | `true` when setup AP mode is active |
 | `setup_ap_ssid` | Setup AP SSID when `provisioning` is true, else `""` |
@@ -97,14 +97,14 @@ curl -H "Authorization: Bearer YOUR_TOKEN" http://tiny-engineer.local/health
 Persistent settings from NVS. Safe, no hardware side effects. Developer guide for adding settings: [`settings.md`](settings.md).
 
 ```bash
-curl http://tiny-engineer.local/settings
+curl http://vibebot.local/settings
 ```
 
 ```json
 {
   "ok": true,
   "sleep_timeout": 10,
-  "hostname": "tiny-engineer",
+  "hostname": "vibebot",
   "volume": 70,
   "welcome": true,
   "serial_log": false,
@@ -126,7 +126,7 @@ curl http://tiny-engineer.local/settings
 | Field | Meaning |
 | --- | --- |
 | `sleep_timeout` | Minutes of continuous animation `none` before OLED blanks (default **10**). Any non-idle animation keeps the device awake and restarts the idle clock when returning to `none`. Other APIs do not affect the timer. |
-| `hostname` | DHCP/mDNS label without `.local` (default **`tiny-engineer`**) |
+| `hostname` | DHCP/mDNS label without `.local` (default **`vibebot`**) |
 | `volume` | Speaker gain percent for tones and WAV playback (default **70**) |
 | `welcome` | Play welcome animation on boot when Wi-Fi connects (default **true**). Also enables head/neck motion during `sleep_inertia` loading |
 | `serial_log` | USB serial debug logging (default **false**). When off, diagnostic `Serial` output is suppressed |
@@ -148,22 +148,22 @@ curl http://tiny-engineer.local/settings
 Update one or more settings. Query params. Values are written to NVS. `sleep_timeout`, `volume`, `welcome`, `serial_log`, `continuous_timeout`, `eyes_style`, `access_token`, and `agentdeck` apply immediately; a changed `hostname` or `loading` takes effect on the **next reboot**. WiFi credentials (`wifi_ssid` + `wifi_password`) are accepted **only in setup AP mode**; they are **tested before save**; on success the device connects to the home network and returns `wifi_connect_success`, `wifi_ip`, and `wifi_hostname`. `hostname` may be sent with those WiFi params (same validation as Config); it is saved before the STA connect so mDNS uses the chosen name immediately. Outside setup AP → **400** `wifi setup only in AP mode`. Servo ranges (`servo_mins` + `servo_maxs`) are also **setup AP only**; they apply immediately to motion clamps. Outside setup AP → **400** `servo setup only in AP mode`. RGB LED mapping (`rgb_order`) is **setup AP only** and applies immediately to the onboard LED. Outside setup AP → **400** `rgb setup only in AP mode`. OLED rotation (`oled_rotate_180`) is **setup AP only** and applies immediately to the display. Outside setup AP → **400** `oled setup only in AP mode`. Requires Bearer when auth is enabled.
 
 ```bash
-curl -X POST "http://tiny-engineer.local/settings?sleep_timeout=2"
-curl -X POST "http://tiny-engineer.local/settings?hostname=desk-bot"
-curl -X POST "http://tiny-engineer.local/settings?volume=40"
-curl -X POST "http://tiny-engineer.local/settings?welcome=0"
-curl -X POST "http://tiny-engineer.local/settings?serial_log=1"
-curl -X POST "http://tiny-engineer.local/settings?continuous_timeout=10"
-curl -X POST "http://tiny-engineer.local/settings?loading=sleep_inertia"
-curl -X POST "http://tiny-engineer.local/settings?eyes_style=kaomoji"
-curl -X POST "http://tiny-engineer.local/settings?access_token=secret"
-curl -X POST "http://tiny-engineer.local/settings?access_token="
-curl -X POST "http://tiny-engineer.local/settings?agentdeck=off"
+curl -X POST "http://vibebot.local/settings?sleep_timeout=2"
+curl -X POST "http://vibebot.local/settings?hostname=desk-bot"
+curl -X POST "http://vibebot.local/settings?volume=40"
+curl -X POST "http://vibebot.local/settings?welcome=0"
+curl -X POST "http://vibebot.local/settings?serial_log=1"
+curl -X POST "http://vibebot.local/settings?continuous_timeout=10"
+curl -X POST "http://vibebot.local/settings?loading=sleep_inertia"
+curl -X POST "http://vibebot.local/settings?eyes_style=kaomoji"
+curl -X POST "http://vibebot.local/settings?access_token=secret"
+curl -X POST "http://vibebot.local/settings?access_token="
+curl -X POST "http://vibebot.local/settings?agentdeck=off"
 curl -X POST "http://192.168.4.1/settings?wifi_ssid=MyNetwork&wifi_password=secret&hostname=desk-bot"
 curl -X POST "http://192.168.4.1/settings?servo_mins=60,40,45,35,40&servo_maxs=130,130,135,125,130"
 curl -X POST "http://192.168.4.1/settings?rgb_order=GRB"
 curl -X POST "http://192.168.4.1/settings?oled_rotate_180=1"
-curl -X POST "http://tiny-engineer.local/settings?sleep_timeout=10&hostname=tiny-engineer&volume=70&welcome=1&serial_log=0&continuous_timeout=5&loading=progress"
+curl -X POST "http://vibebot.local/settings?sleep_timeout=10&hostname=vibebot&volume=70&welcome=1&serial_log=0&continuous_timeout=5&loading=progress"
 ```
 
 ```json
@@ -221,14 +221,14 @@ Factory reset: clears the NVS `te` namespace and restores settings to compile-ti
 The Config web UI clears the browser-stored Bearer token and shows a one-shot gate: power-cycle the device, then join the robot WiFi shown on the OLED and open the setup wizard. It does not poll for reconnect.
 
 ```bash
-curl -X POST "http://tiny-engineer.local/settings/reset"
+curl -X POST "http://vibebot.local/settings/reset"
 ```
 
 ```json
 {
   "ok": true,
   "sleep_timeout": 10,
-  "hostname": "tiny-engineer",
+  "hostname": "vibebot",
   "volume": 70,
   "welcome": true,
   "serial_log": false,
@@ -247,7 +247,7 @@ NVS write failure → **400** `{"ok":false,"error":"factory reset failed"}`.
 Plays 500 / 700 / 1000 Hz on the MAX98357A (`runSoundTest()`).
 
 ```bash
-curl -X POST http://tiny-engineer.local/test/audio
+curl -X POST http://vibebot.local/test/audio
 ```
 
 ```json
@@ -259,7 +259,7 @@ curl -X POST http://tiny-engineer.local/test/audio
 Plays `/bell.wav` from LittleFS (`playBell()`). Git source is [`assets/bell.wav`](../assets/bell.wav) (44100 Hz mono PCM); `pio run` copies it into `data/` for the filesystem image. After changing the asset, upload with `pio run -t upload` or `pio run -t uploadfs`. Do not edit `data/` by hand — the next build overwrites it.
 
 ```bash
-curl -X POST http://tiny-engineer.local/test/audio/bell
+curl -X POST http://vibebot.local/test/audio/bell
 ```
 
 ```json
@@ -273,7 +273,7 @@ If the WAV is missing or unreadable, returns **500** with `{"ok":false,"error":"
 OLED demo: title, `HELLO`, X in a box (`runOledTest()`). No-op if the panel is missing.
 
 ```bash
-curl -X POST http://tiny-engineer.local/test/screen
+curl -X POST http://vibebot.local/test/screen
 ```
 
 ```json
@@ -285,7 +285,7 @@ curl -X POST http://tiny-engineer.local/test/screen
 All five servos: per-joint mid → +0.5 → −0.5 → mid of the saved min/max (`runServoTest()`). Needs a strong 5 V supply — see [power.md](hardware/power.md).
 
 ```bash
-curl -X POST http://tiny-engineer.local/test/movement
+curl -X POST http://vibebot.local/test/movement
 ```
 
 ```json
@@ -297,7 +297,7 @@ curl -X POST http://tiny-engineer.local/test/movement
 Onboard WS2812 on GPIO10: R → G → B → white → off (`runRgbTest()`), then fades back to the current animation color (see [RGB LED](#rgb-led)).
 
 ```bash
-curl -X POST http://tiny-engineer.local/test/led
+curl -X POST http://vibebot.local/test/led
 ```
 
 ```json
@@ -427,7 +427,7 @@ Smoothly move one servo to an angle at **~140°/s** (`SERVO_MAX_SPEED_DEG_S`) fr
 | `angle` | number | `0`–`180` |
 
 ```bash
-curl -X POST "http://tiny-engineer.local/test/servo?index=0&angle=90"
+curl -X POST "http://vibebot.local/test/servo?index=0&angle=90"
 ```
 
 ```json
@@ -451,7 +451,7 @@ Assembled robot: firmware clamps to the NVS min/max from setup (stock defaults i
 Current animation name. Default at boot: `none`. No hardware side effects.
 
 ```bash
-curl http://tiny-engineer.local/anim
+curl http://vibebot.local/anim
 ```
 
 ```json
@@ -471,18 +471,18 @@ Request an animation switch. Each animation runs at least **1s**; if the current
 | `name` | string | `none`, `typing`, `reading`, `thinking`, `ring`, `welcome`, `attention`, `error`, `abort`, `dead`, `wakeup`, `sleep` |
 
 ```bash
-curl -X POST "http://tiny-engineer.local/anim?name=typing"
-curl -X POST "http://tiny-engineer.local/anim?name=reading"
-curl -X POST "http://tiny-engineer.local/anim?name=thinking"
-curl -X POST "http://tiny-engineer.local/anim?name=ring"
-curl -X POST "http://tiny-engineer.local/anim?name=welcome"
-curl -X POST "http://tiny-engineer.local/anim?name=wakeup"
-curl -X POST "http://tiny-engineer.local/anim?name=sleep"
-curl -X POST "http://tiny-engineer.local/anim?name=attention"
-curl -X POST "http://tiny-engineer.local/anim?name=error"
-curl -X POST "http://tiny-engineer.local/anim?name=abort"
-curl -X POST "http://tiny-engineer.local/anim?name=dead"
-curl -X POST "http://tiny-engineer.local/anim?name=none"
+curl -X POST "http://vibebot.local/anim?name=typing"
+curl -X POST "http://vibebot.local/anim?name=reading"
+curl -X POST "http://vibebot.local/anim?name=thinking"
+curl -X POST "http://vibebot.local/anim?name=ring"
+curl -X POST "http://vibebot.local/anim?name=welcome"
+curl -X POST "http://vibebot.local/anim?name=wakeup"
+curl -X POST "http://vibebot.local/anim?name=sleep"
+curl -X POST "http://vibebot.local/anim?name=attention"
+curl -X POST "http://vibebot.local/anim?name=error"
+curl -X POST "http://vibebot.local/anim?name=abort"
+curl -X POST "http://vibebot.local/anim?name=dead"
+curl -X POST "http://vibebot.local/anim?name=none"
 ```
 
 ```json
@@ -558,9 +558,9 @@ Create, update, or end one session. Query params:
 `activity` only matters with `state=working`; a `working` update without `activity` keeps the session's previous activity (or `thinking` for a new one). Omitted `agent` / `label` keep their stored values. Re-posting an unchanged session is a keepalive: it refreshes the 30-min reaper but does **not** count as a state change for arbitration.
 
 ```bash
-curl -X POST "http://tiny-engineer.local/session?id=cc-1&state=working&activity=typing&agent=claude-code&label=tiny-engineer"
-curl -X POST "http://tiny-engineer.local/session?id=cc-1&state=waiting"
-curl -X POST "http://tiny-engineer.local/session?id=cc-1&state=ended"
+curl -X POST "http://vibebot.local/session?id=cc-1&state=working&activity=typing&agent=claude-code&label=my-project"
+curl -X POST "http://vibebot.local/session?id=cc-1&state=waiting"
+curl -X POST "http://vibebot.local/session?id=cc-1&state=ended"
 ```
 
 ```json
@@ -572,7 +572,7 @@ curl -X POST "http://tiny-engineer.local/session?id=cc-1&state=ended"
 ### `GET /sessions`
 
 ```bash
-curl http://tiny-engineer.local/sessions
+curl http://vibebot.local/sessions
 ```
 
 ```json
@@ -580,7 +580,7 @@ curl http://tiny-engineer.local/sessions
   "ok": true,
   "source": "rest",
   "sessions": [
-    { "id": "cc-1", "agent": "claude-code", "label": "tiny-engineer", "state": "working", "activity": "typing", "slot": 0, "age_s": 12, "source": "rest" }
+    { "id": "cc-1", "agent": "claude-code", "label": "my-project", "state": "working", "activity": "typing", "slot": 0, "age_s": 12, "source": "rest" }
   ]
 }
 ```

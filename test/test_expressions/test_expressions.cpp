@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 #include <unity.h>
-#include <TinyEngineerExpressions.h>
+#include <VibeBotExpressions.h>
 #include <cstring>
 #include <limits>
 
-namespace expr = tiny_engineer::expressions;
+namespace expr = vibebot::expressions;
 
 void test_names_and_invalid_ids() {
   const char* expected[] = {

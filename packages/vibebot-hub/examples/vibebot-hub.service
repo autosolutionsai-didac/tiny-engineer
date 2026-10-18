@@ -3,7 +3,7 @@
 #   mkdir -p ~/.config/systemd/user ~/.config/vibebot
 #   cp vibebot-hub.service ~/.config/systemd/user/
 #   # optional settings (keep it private: chmod 600 ~/.config/vibebot/hub.env)
-#   printf 'VIBEBOT_URL=http://tiny-engineer.local\n#VIBEBOT_TOKEN=your-access-token\n' > ~/.config/vibebot/hub.env
+#   printf 'VIBEBOT_URL=http://vibebot.local\n#VIBEBOT_TOKEN=your-access-token\n' > ~/.config/vibebot/hub.env
 #   systemctl --user daemon-reload
 #   systemctl --user enable --now vibebot-hub
 #   journalctl --user -u vibebot-hub -f

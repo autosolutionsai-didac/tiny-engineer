@@ -11,13 +11,13 @@ Options:
   --port <n>       Listen port on 127.0.0.1 (default: VIBEBOT_HUB_PORT, else 17826).
                    Use --port 17825 to receive the Vibe Deck VS Code / Chrome
                    extensions unchanged (stop the Vibe Deck daemon first).
-  --robot <url>    Robot base URL (default: VIBEBOT_URL, else TINY_ENGINEER_URL,
-                   else http://tiny-engineer.local)
+  --robot <url>    Robot base URL (default: VIBEBOT_URL, else deprecated TINY_ENGINEER_URL,
+                   else http://vibebot.local)
   --no-clear       Do not POST /sessions/clear to the robot at start-up
   -q, --quiet      No log output
   -h, --help       Show this help
 
-Auth: VIBEBOT_TOKEN (else TINY_ENGINEER_TOKEN) is sent as
+Auth: VIBEBOT_TOKEN (else deprecated TINY_ENGINEER_TOKEN) is sent as
 Authorization: Bearer <token>. It is never logged.
 
 Routes: POST /hook/<claude-code|cursor|codex|antigravity>, POST /event,

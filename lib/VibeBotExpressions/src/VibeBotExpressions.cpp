@@ -1,9 +1,9 @@
-#include "TinyEngineerExpressions.h"
+#include "VibeBotExpressions.h"
 #include "expression_assets.h"
 
 #include <cstring>
 
-namespace tiny_engineer {
+namespace vibebot {
 namespace expressions {
 
 namespace {
@@ -73,4 +73,4 @@ bool render(Expression expression, uint32_t elapsedMs,
 }
 
 }  // namespace expressions
-}  // namespace tiny_engineer
+}  // namespace vibebot

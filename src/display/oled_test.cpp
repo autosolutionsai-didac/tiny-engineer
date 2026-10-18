@@ -17,7 +17,7 @@ void runOledTest() {
   serialLogPrintln("==========================");
 
   showOledText(
-    "Tiny Engineer",
+    "Vibe Bot",
     "OLED test"
   );
 

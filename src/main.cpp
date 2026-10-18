@@ -40,7 +40,7 @@ void setup() {
 
   serialLogPrintln();
   serialLogPrintln("==========================");
-  serialLogPrintln("TINY ENGINEER");
+  serialLogPrintln("VIBE BOT");
   serialLogPrintln("==========================");
 
   setRgb(0, 32, 0);

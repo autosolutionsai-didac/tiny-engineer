@@ -1,6 +1,6 @@
 # Electricity and units
 
-Before you touch a wire, you need a shared vocabulary. Hardware docs throw around V, A, Ω, and GND like everyone took a circuits class. You didn't — that's fine. This chapter gets you to "I know what could kill my board." Every embedded project has power rails and a common ground; Tiny Engineer is a clear example of **two voltage domains** on one USB cable.
+Before you touch a wire, you need a shared vocabulary. Hardware docs throw around V, A, Ω, and GND like everyone took a circuits class. You didn't — that's fine. This chapter gets you to "I know what could kill my board." Every embedded project has power rails and a common ground; Vibe Bot is a clear example of **two voltage domains** on one USB cable.
 
 ---
 
@@ -23,7 +23,7 @@ Four quantities. You'll see them on every datasheet.
 
 ## DC vs AC
 
-**DC (direct current):** voltage stays one way, like a battery. Tiny Engineer runs on **5 V DC** from USB.
+**DC (direct current):** voltage stays one way, like a battery. Vibe Bot runs on **5 V DC** from USB.
 
 **AC (alternating current):** voltage flips direction — wall outlets, 50/60 Hz. Not relevant inside the robot except that your USB charger converts AC to DC before the robot ever sees it.
 
@@ -81,7 +81,7 @@ Three ways beginners destroy boards. Each is a **wiring mistake**, not a firmwar
 
 **What happens:** Input protection may clamp once; repeated or sustained overvoltage **damages the pin or the chip**. Behavior becomes erratic; pin may die silently.
 
-**On Tiny Engineer:** I2C, I2S, and servo **signal** lines are 3.3 V logic. Servo **motor power** is 5 V on the red wire — that goes to PCA9685 **V+**, not to an ESP32 GPIO.
+**On Vibe Bot:** I2C, I2S, and servo **signal** lines are 3.3 V logic. Servo **motor power** is 5 V on the red wire — that goes to PCA9685 **V+**, not to an ESP32 GPIO.
 
 > **Software analogy:** Sending a payload the parser never validated — undefined behavior, often permanent. No try/catch on the silicon.
 
@@ -115,7 +115,7 @@ So **3.3 V is the "one" voltage** on this robot's logic wires. A **zero** is not
 | | **3.3 V (logic domain)** | **5 V (power domain)** |
 | --- | --- | --- |
 | **Role** | Encode **0s and 1s**; run logic chips at their rated voltage | **Deliver energy** — motors, audio amp, board power input |
-| **On Tiny Engineer** | ESP32 GPIO, I2C (SDA/SCL), I2S (BCLK/LRC/DIN), servo **signal** wires, **VCC** on PCA9685/OLED | Servo **motor** power (red wire → PCA9685 **V+**), MAX98357A **Vin**, ESP32 **5V** input pad |
+| **On Vibe Bot** | ESP32 GPIO, I2C (SDA/SCL), I2S (BCLK/LRC/DIN), servo **signal** wires, **VCC** on PCA9685/OLED | Servo **motor** power (red wire → PCA9685 **V+**), MAX98357A **Vin**, ESP32 **5V** input pad |
 | **Current** | Milliamps per pin / tens of mA on a **VCC** rail | Up to **~1.5 A** when servos stall |
 
 **VCC** on a breakout (3.3 V) = "power this chip's brain so it can read and drive ones and zeros." It is **not** the same net as the 5 V that spins a servo.
@@ -142,7 +142,7 @@ They share GND (that's your **zero**). They do **not** share the same positive r
 
 ---
 
-## In Tiny Engineer
+## In Vibe Bot
 
 This robot is a textbook example of **two domains on one USB cable**.
 

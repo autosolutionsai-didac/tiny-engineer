@@ -1,6 +1,6 @@
 import { baseName, firstString } from "../util.js";
 
-/** Same tool sets as packages/tiny-engineer-antigravity/src/map.js. */
+/** Same tool sets as packages/vibebot-antigravity/src/map.js. */
 export const READING_TOOLS = new Set([
   "view_file",
   "grep_search",
@@ -22,7 +22,7 @@ export const TYPING_TOOLS = new Set([
 /**
  * Antigravity lifecycle hook → session update. The hook type is not in the
  * payload; vibebot-send passes it as `?type=` (from `--type X` or the first
- * positional argument, like `tiny-engineer-antigravity PreToolUse`).
+ * positional argument, like `vibebot-antigravity PreToolUse`).
  *
  * Antigravity's payload has no documented session id, so several plausible
  * keys are tried and the working directory is the fallback.
@@ -79,7 +79,7 @@ export function mapAntigravity(payload, meta = {}) {
 }
 
 /**
- * JSON that Antigravity expects on stdout (same as tiny-engineer-antigravity).
+ * JSON that Antigravity expects on stdout (same as vibebot-antigravity).
  * @param {string | undefined} type
  */
 export function antigravityResponse(type) {

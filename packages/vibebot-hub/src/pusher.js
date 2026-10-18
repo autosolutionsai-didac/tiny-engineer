@@ -26,7 +26,7 @@ function query(params) {
 
 export function createPusher(options = {}) {
   const opts = {
-    robotUrl: "http://tiny-engineer.local",
+    robotUrl: "http://vibebot.local",
     token: null,
     fetch: globalThis.fetch,
     now: Date.now,

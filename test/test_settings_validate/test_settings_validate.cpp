@@ -15,7 +15,8 @@ void test_hostname_rejects_invalid() {
 }
 
 void test_hostname_accepts_valid() {
-  TEST_ASSERT_TRUE(settingsValidateHostname("tiny-engineer"));
+  TEST_ASSERT_TRUE(settingsValidateHostname("vibebot"));
+  TEST_ASSERT_TRUE(settingsValidateHostname("vibe-bot"));
   TEST_ASSERT_TRUE(
     settingsValidateHostname("abcdefghijklmnopqrstuvwxyz01234")
   );

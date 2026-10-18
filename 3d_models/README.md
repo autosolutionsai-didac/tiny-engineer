@@ -1,6 +1,18 @@
 # 3D models
 
-Printable parts and source CAD for the Tiny Engineer desk robot.
+Printable parts and source CAD for the Vibe Bot desk robot, based on the Tiny Engineer open hardware design by Krzysztof Jamroz (upstream Source Location: https://github.com/jamro/tiny-engineer/tree/main/3d_models — see [NOTICE](NOTICE)).
+
+## CAD TODO (Vibe Bot)
+
+The CAD in this folder is still the upstream Tiny Engineer design. Before Vibe Bot ships its own printables, the following must be done **in Autodesk Fusion 360** (the `.f3d` source can only be edited there; never hand-edit `.3mf` / `.stl` / `.step` exports), then re-exported for every servo preset ([adding parts](../docs/3d/adding-parts.md), [parametric design](../docs/3d/parametric-design.md)):
+
+- [ ] **Replace the emblem.** `AiEmblem` (all `parts/*/3mf/AiEmblem.3mf` and its body in `cad/TinyEngineer.f3d`) is upstream trademark geometry ([TRADEMARK.md](../TRADEMARK.md)). Replace it with a Vibe Bot emblem and stop shipping `AiEmblem` as this product's branding.
+- [ ] **Redesign the controller slot.** The `DeskTop` / `LampBase` ESP slot is sized for the Waveshare ESP32-C3-Zero. Rework it for the **Seeed Studio XIAO ESP32S3 (21 × 17.8 mm)**, with access to the XIAO USB-C (flash / serial) and clearance around its antenna.
+- [ ] **Add a slot for the LED bar.** Add a mount for the 8-LED WS2812B session bar (plus the lamp LED, the 74AHCT1G125 level shifter and the 330 Ω resistor) — see [docs/hardware/wiring.md](../docs/hardware/wiring.md#led-chain).
+- [ ] **Robot power input.** Check the existing USB-C breakout mount still fits the separate 5 V / 3 A power-input USB-C, the SS14 and the 470 µF capacitor ([power.md](../docs/hardware/power.md)).
+- [ ] **Optional:** rename the source file (`cad/TinyEngineer.f3d`) and the Fusion add-in ([`fusion/TinyEngineerTools/`](fusion/TinyEngineerTools/): folder, `.py` and `.manifest` must be renamed together; command names such as *Tiny Engineer Parts Exporter*) once the above is done, and update every doc link; keep the upstream attribution and CERN-OHL-S notices.
+
+Until then, prints from `parts/` produce the upstream Tiny Engineer mechanics (C3-Zero slot, AI emblem).
 
 ## Source CAD (edit / resize)
 
@@ -78,7 +90,7 @@ Same filenames in each `parts/{servo_id}/3mf/` folder (and matching `stl/` / `st
 | `Hat.3mf` | Hat |
 | `ServoSizingTester.3mf` | Servo pocket fit tester |
 | `ScrewSizingTest.3mf` | M2 screw pilot-hole diameter tester |
-| `AiEmblem.3mf` | AI emblem detail |
+| `AiEmblem.3mf` | AI emblem detail — upstream Tiny Engineer trademark geometry; do not use as Vibe Bot branding (to be replaced, see [CAD TODO](#cad-todo-vibe-bot)) |
 
 ## Next steps
 
@@ -95,4 +107,4 @@ CAD source (`.f3d`) in [`cad/`](cad/) and printable parts (`.3mf`) in [`parts/`]
 
 Commercial use is allowed. If you modify and distribute Products based on these designs, reciprocal provisions require sharing your Complete Source under the same license. This documentation file is software documentation and remains under the MIT License — see [LICENSING.md](../LICENSING.md).
 
-The **Tiny Engineer** name and logo are not licensed — see [TRADEMARK.md](../TRADEMARK.md).
+The upstream **Tiny Engineer** name, logo and AI emblem are not licensed and are not Vibe Bot branding — see [TRADEMARK.md](../TRADEMARK.md).

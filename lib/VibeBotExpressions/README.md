@@ -1,8 +1,8 @@
-# Tiny Engineer Expressions
+# Vibe Bot Expressions
 
 Sixteen animated, kaomoji-inspired faces for a **128 × 32 monochrome OLED**. The C++ library renders a frame into caller-owned memory; the application decides when and where to show it.
 
-This is an optional display library used by the robot when Config `eyes_style=kaomoji`. It does not replace Tiny Engineer's classic eye modes by itself. The application decides which style is active and when to show a frame. It does not access I²C, initialize a display, change its rotation, or issue servo commands.
+This is an optional display library used by the robot when Config `eyes_style=kaomoji`. It does not replace Vibe Bot's classic eye modes by itself. The application decides which style is active and when to show a frame. It does not access I²C, initialize a display, change its rotation, or issue servo commands.
 
 ## Faces
 
@@ -32,9 +32,9 @@ Each face has 30 frames, spaced 100 ms apart, for a repeating 3-second animation
 ## Use from C++
 
 ```cpp
-#include <TinyEngineerExpressions.h>
+#include <VibeBotExpressions.h>
 
-namespace faces = tiny_engineer::expressions;
+namespace faces = vibebot::expressions;
 uint8_t frame[faces::kFrameBytes]; // 512 bytes, owned by the caller
 
 bool ready = faces::render(faces::Expression::Happy, elapsedMs,

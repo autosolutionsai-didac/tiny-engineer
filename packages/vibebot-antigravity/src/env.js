@@ -2,9 +2,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
 
-const TOKEN_KEY = "TINY_ENGINEER_TOKEN";
-const URL_KEY = "TINY_ENGINEER_URL";
-export const DEFAULT_URL = "http://tiny-engineer.local";
+// Preferred names first; TINY_ENGINEER_* are deprecated aliases kept so
+// existing setups from the upstream project keep working.
+export const TOKEN_KEYS = ["VIBEBOT_TOKEN", "TINY_ENGINEER_TOKEN"];
+export const URL_KEYS = ["VIBEBOT_URL", "TINY_ENGINEER_URL"];
+export const DEFAULT_URL = "http://vibebot.local";
 
 /**
  * Parse one dotenv line into [key, value] or null.
@@ -32,6 +34,19 @@ function parseLine(line) {
 }
 
 /**
+ * True when `key` (or, for token/URL keys, any of its aliases) is already set.
+ * @param {string} key
+ */
+function alreadySet(key) {
+  const group = TOKEN_KEYS.includes(key)
+    ? TOKEN_KEYS
+    : URL_KEYS.includes(key)
+      ? URL_KEYS
+      : [key];
+  return group.some((k) => process.env[k] !== undefined);
+}
+
+/**
  * Parse a .env file and set process.env for keys not already set.
  * @param {string} filePath
  */
@@ -42,7 +57,7 @@ function loadFile(filePath) {
       const parsed = parseLine(line);
       if (!parsed) continue;
       const [key, value] = parsed;
-      if (process.env[key] === undefined) {
+      if (!alreadySet(key)) {
         process.env[key] = value;
       }
     }
@@ -54,28 +69,33 @@ function loadFile(filePath) {
 /**
  * Load .env from cwd and ~/.gemini/config/.env.
  * @param {string} [cwd]
+ * @param {string} [home]
  */
-export function loadDotEnv(cwd = process.cwd()) {
+export function loadDotEnv(cwd = process.cwd(), home = homedir()) {
   loadFile(join(cwd, ".env"));
-  loadFile(join(homedir(), ".gemini", "config", ".env"));
+  loadFile(join(home, ".gemini", "config", ".env"));
 }
 
 /**
- * @returns {string | null} trimmed TINY_ENGINEER_TOKEN, or null if unset/empty
+ * @returns {string | null} trimmed VIBEBOT_TOKEN (or deprecated
+ *   TINY_ENGINEER_TOKEN), or null if unset/empty
  */
 export function getToken() {
-  const value = process.env[TOKEN_KEY];
-  if (value === undefined) return null;
-  const trimmed = value.trim();
-  return trimmed ? trimmed : null;
+  for (const key of TOKEN_KEYS) {
+    const trimmed = process.env[key]?.trim();
+    if (trimmed) return trimmed;
+  }
+  return null;
 }
 
 /**
- * @returns {string} Robot base URL
+ * @returns {string} VIBEBOT_URL (or deprecated TINY_ENGINEER_URL) without
+ *   trailing slashes, or the default
  */
 export function getBaseUrl() {
-  const value = process.env[URL_KEY];
-  if (value === undefined) return DEFAULT_URL;
-  const trimmed = value.trim().replace(/\/+$/, "");
-  return trimmed || DEFAULT_URL;
+  for (const key of URL_KEYS) {
+    const trimmed = process.env[key]?.trim().replace(/\/+$/, "");
+    if (trimmed) return trimmed;
+  }
+  return DEFAULT_URL;
 }

@@ -1,6 +1,6 @@
 # Getting started
 
-Canonical build checklist for Tiny Engineer. Each step: open the linked doc, finish the exit criterion, return here. Mechanical joins live in [assembly.md](3d/assembly.md); this page owns overall order.
+Canonical build checklist for Vibe Bot. Each step: open the linked doc, finish the exit criterion, return here. Mechanical joins live in [assembly.md](3d/assembly.md); this page owns overall order.
 
 Robot already on Wi-Fi? Jump to [step 8](#8-agent-hooks).
 
@@ -8,11 +8,11 @@ Robot already on Wi-Fi? Jump to [step 8](#8-agent-hooks).
 
 Read this before you power anything. Optional *why*: [Ch. 01](hardware-for-software-engineers/01-electricity-and-units.md) and [Ch. 07](hardware-for-software-engineers/07-power-budgets-and-safety.md). Full primer is parallel reading, not a gate — [From Code to Circuits](hardware-for-software-engineers/README.md).
 
-- Logic is **3.3 V**. Servos and the amp need **5 V / ≥2 A**. Never power servos from the ESP32 3.3 V pin.
+- Logic is **3.3 V**. Servos, the amp and the LED chain need **5 V / 3 A** on the robot's own USB-C power input (legacy C3 build: ≥ 2 A). Never power servos from the ESP32 3.3 V pin.
 - PCA9685 **VCC** (logic, 3.3 V) must not short to **V+** (servo rail, 5 V).
 - Every module shares **GND**.
 - Speaker connects to **SPK+** and **SPK−** only. **SPK− is not ground.**
-- Leave the C3-Zero ceramic antenna clear of metal and dense plastic.
+- Keep the XIAO ESP32S3 antenna (legacy: C3-Zero ceramic antenna) clear of metal and dense plastic.
 
 ## Timeline
 
@@ -37,13 +37,13 @@ flowchart LR
 ### 0. Safety
 
 - **Open:** the [Safety](#safety) card on this page.
-- **Until:** you know 3.3 V vs 5 V, VCC ≠ V+, common GND, SPK− ≠ GND, and 2 A.
+- **Until:** you know 3.3 V vs 5 V, VCC ≠ V+, common GND, SPK− ≠ GND, and 3 A.
 - **Return** here.
 
 ### 1. Shop
 
 - **Open:** [shopping.md](shopping.md).
-- **Until:** cart in hand — electronics, M2 screws/nuts, **5 V / ≥2 A** supply, **data** USB cable, and a print path (filament or a service order). Default servos: **Tower Pro SG90**.
+- **Until:** cart in hand — electronics, M2 screws/nuts, **5 V / 3 A** USB-C supply, **data** USB cable, and a print path (filament or a service order). Default servos: **Tower Pro SG90**.
 - **Return** here.
 
 ### 2. Print or order
@@ -54,7 +54,7 @@ flowchart LR
 
 ### 3. Wire
 
-- **Open:** [hardware/wiring.md](hardware/wiring.md) and the diagram [wiring/Tiny Engineer.drawio.png](wiring/Tiny%20Engineer.drawio.png).
+- **Open:** [hardware/wiring.md](hardware/wiring.md) and the diagram [wiring/legacy-c3-zero.drawio.png](wiring/legacy-c3-zero.drawio.png).
 - **Until:** pre-power checks pass (common GND; PCA9685 **VCC** = 3.3 V vs **V+** = 5 V not shorted; OLED clock on **SCL**; speaker on **SPK+/SPK−** only). Harness stays on the desk.
 - **Return** here.
 
@@ -78,11 +78,11 @@ flowchart LR
 
 ### 7. Prove it
 
-Open `http://tiny-engineer.local/` (or the IP on the OLED) for the web UI.
+Open `http://vibebot.local/` (or the IP on the OLED) for the web UI.
 
 ```bash
-curl http://tiny-engineer.local/health
-curl -X POST "http://tiny-engineer.local/anim?name=ring"
+curl http://vibebot.local/health
+curl -X POST "http://vibebot.local/anim?name=ring"
 ```
 
 - **Until:** `/health` OK and `ring` runs (motion; sound if LittleFS uploaded). If `.local` is slow, use the OLED IP or `curl -4`.

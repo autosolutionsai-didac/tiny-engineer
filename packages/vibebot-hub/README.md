@@ -29,7 +29,7 @@ Without a global install, use `node /abs/path/to/packages/vibebot-hub/bin/vibebo
 ## Run the hub
 
 ```bash
-vibebot-hub                                  # 127.0.0.1:17826 → http://tiny-engineer.local
+vibebot-hub                                  # 127.0.0.1:17826 → http://vibebot.local
 vibebot-hub --robot http://192.168.1.42      # robot by IP
 VIBEBOT_TOKEN=… vibebot-hub                  # robot has an access_token
 vibebot-hub --port 17825                     # also serve the Vibe Deck extensions unchanged
@@ -38,8 +38,8 @@ vibebot-hub --port 17825                     # also serve the Vibe Deck extensio
 | Setting | Flag | Env | Default |
 |---|---|---|---|
 | Listen port (always 127.0.0.1) | `--port` | `VIBEBOT_HUB_PORT` | `17826` |
-| Robot URL | `--robot` | `VIBEBOT_URL`, else `TINY_ENGINEER_URL` | `http://tiny-engineer.local` |
-| Bearer token | — | `VIBEBOT_TOKEN`, else `TINY_ENGINEER_TOKEN` | none (no header) |
+| Robot URL | `--robot` | `VIBEBOT_URL`, else deprecated `TINY_ENGINEER_URL` | `http://vibebot.local` |
+| Bearer token | — | `VIBEBOT_TOKEN`, else deprecated `TINY_ENGINEER_TOKEN` | none (no header) |
 | Clear stale REST sessions at start | `--no-clear` turns it off | — | on (`POST /sessions/clear`) |
 | Quiet logs | `-q` | — | logs to stderr |
 
@@ -115,7 +115,7 @@ Requests that carry a web page `Origin` or a non-local `Host` get `403`. This bl
 | `stop` `error` | error |
 | `sessionEnd` | ended |
 
-Events whose `conversation_id` or `generation_id` is `""` are skipped, the same rule as `tiny-engineer-cursor`.
+Events whose `conversation_id` or `generation_id` is `""` are skipped, the same rule as `vibebot-cursor`.
 
 ### Antigravity (hook type from `?type=`; id from `conversationId`/`cascadeId`/`trajectoryId`/`sessionId`, else the cwd)
 
@@ -183,7 +183,7 @@ Every hook is `async`, so Claude Code never waits on it.
 }
 ```
 
-The project hooks in this repo's `.claude/settings.json` still drive `/anim` directly through `tiny-engineer-claude-code`. Use one or the other per robot: once the hub has sessions, the robot's session arbitration owns the pose.
+The project hooks in this repo's `.claude/settings.json` still drive `/anim` directly through `vibebot-claude-code`. Use one or the other per robot: once the hub has sessions, the robot's session arbitration owns the pose.
 
 ### Cursor: `~/.cursor/hooks.json` (or a project `.cursor/hooks.json`)
 
@@ -291,7 +291,7 @@ Hook shims must then use the same port: `export VIBEBOT_HUB_PORT=17825` in the e
 ## Smoke test
 
 ```bash
-vibebot-hub --robot http://tiny-engineer.local &
+vibebot-hub --robot http://vibebot.local &
 echo '{"hook_event_name":"UserPromptSubmit","session_id":"demo","cwd":"/tmp/demo"}' | vibebot-send claude-code
 curl -s http://127.0.0.1:17826/sessions
 echo '{"hook_event_name":"Stop","session_id":"demo","cwd":"/tmp/demo"}' | vibebot-send claude-code

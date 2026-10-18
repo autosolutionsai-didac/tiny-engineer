@@ -1,17 +1,17 @@
-# Integrating Tiny Engineer
+# Integrating Vibe Bot
 
-Tiny Engineer is a Wi-Fi desk robot. Drive it from any tool that can make HTTP requests, use one of the dedicated helpers (Cursor, Antigravity, Claude Code) that map agent hook events to poses, or run the session hub to show several agents at once.
+Vibe Bot is a Wi-Fi desk robot. Drive it from any tool that can make HTTP requests, use one of the dedicated helpers (Cursor, Antigravity, Claude Code) that map agent hook events to poses, or run the session hub to show several agents at once.
 
-Robot must be on the same network. Base URL: `http://tiny-engineer.local` (or the IP shown on the OLED). Full HTTP reference: [`api.md`](api.md).
+Robot must be on the same network. Base URL: `http://vibebot.local` (or the IP shown on the OLED). Full HTTP reference: [`api.md`](api.md).
 
 Five integration paths:
 
 | Path | Best for | How |
 |---|---|---|
 | **REST API** | Any AI IDE, script, CI, custom agent | `POST /anim?name=…` |
-| **Cursor CLI** | Cursor project hooks | `npx` → `tiny-engineer-cursor` |
-| **Antigravity CLI** | Antigravity CLI lifecycle hooks | `tiny-engineer-antigravity` |
-| **Claude Code CLI** | Claude Code project hooks | `tiny-engineer-claude-code` |
+| **Cursor CLI** | Cursor project hooks | `npx` → `vibebot-cursor` |
+| **Antigravity CLI** | Antigravity CLI lifecycle hooks | `vibebot-antigravity` |
+| **Claude Code CLI** | Claude Code project hooks | `vibebot-claude-code` |
 | **Session hub** | Several agents / windows at once (Claude Code, Cursor, Codex, Antigravity, Vibe Deck extensions) | `vibebot-hub` + `vibebot-send` → `POST /session` |
 
 ```mermaid
@@ -22,20 +22,20 @@ flowchart TB
   end
   subgraph cursorPath [Cursor]
     CursorHook[Cursor hooks.json]
-    CursorHook --> Npx["npx tiny-engineer-cursor"]
+    CursorHook --> Npx["npx vibebot-cursor"]
     Npx --> Post
   end
   subgraph antigravityPath [Antigravity]
     AgHook[Antigravity hooks.json]
-    AgHook --> AgCli["tiny-engineer-antigravity"]
+    AgHook --> AgCli["vibebot-antigravity"]
     AgCli --> Post
   end
   subgraph claudeCodePath [Claude Code]
     CcHook[Claude Code settings.json]
-    CcHook --> CcCli["tiny-engineer-claude-code"]
+    CcHook --> CcCli["vibebot-claude-code"]
     CcCli --> Post
   end
-  Post --> Robot[Tiny Engineer on Wi-Fi]
+  Post --> Robot[Vibe Bot on Wi-Fi]
 ```
 
 ---
@@ -47,7 +47,7 @@ Call the board directly. Works with Claude Code, Windsurf, Continue, custom plug
 ### Main call
 
 ```bash
-curl -X POST "http://tiny-engineer.local/anim?name=typing"
+curl -X POST "http://vibebot.local/anim?name=typing"
 ```
 
 | `name` | Typical use |
@@ -71,13 +71,13 @@ Firmware holds each pose ≥1s and keeps only the **latest** pending switch — 
 **Shell**
 
 ```bash
-curl -4 -sS -m 2 -X POST "http://tiny-engineer.local/anim?name=reading" >/dev/null || true
+curl -4 -sS -m 2 -X POST "http://vibebot.local/anim?name=reading" >/dev/null || true
 ```
 
 **JavaScript (Node 18+)**
 
 ```js
-await fetch("http://tiny-engineer.local/anim?name=thinking", {
+await fetch("http://vibebot.local/anim?name=thinking", {
   method: "POST",
   signal: AbortSignal.timeout(2000),
 }).catch(() => {});
@@ -89,7 +89,7 @@ await fetch("http://tiny-engineer.local/anim?name=thinking", {
 import urllib.request
 urllib.request.urlopen(
     urllib.request.Request(
-        "http://tiny-engineer.local/anim?name=typing",
+        "http://vibebot.local/anim?name=typing",
         method="POST",
     ),
     timeout=2,
@@ -101,7 +101,7 @@ Wire these into your IDE’s hook / plugin / lifecycle events (prompt submitted 
 Health check (no motion):
 
 ```bash
-curl http://tiny-engineer.local/health
+curl http://vibebot.local/health
 ```
 
 More routes (tests, servo, web UI): [`api.md`](api.md).
@@ -115,20 +115,20 @@ For [Cursor](https://cursor.com/) only: a small Node CLI reads Cursor hook JSON 
 ### Command
 
 ```bash
-npx -y --package=https://github.com/jamro/tiny-engineer/archive/refs/heads/main.tar.gz tiny-engineer-cursor
+npx -y --package=https://github.com/autosolutionsai-didac/tiny-engineer/archive/refs/heads/main.tar.gz vibebot-cursor
 ```
 
 - HTTPS **tarball** (not `github:…` SSH shorthand — that often fails in Cursor hooks with no SSH agent).
-- Bin name `tiny-engineer-cursor` required after `--package=…`.
-- Optional: `--url http://192.168.x.x` (default `http://tiny-engineer.local`).
-- Auth: if the device has an `access_token`, set `TINY_ENGINEER_TOKEN` in the process env or a project-root `.env` file (same value). The CLI sends `Authorization: Bearer …`. No token → no header (auth disabled on device).
+- Bin name `vibebot-cursor` required after `--package=…`.
+- Optional: `--url http://192.168.x.x` or `VIBEBOT_URL` (default `http://vibebot.local`).
+- Auth: if the device has an `access_token`, set `VIBEBOT_TOKEN` in the process env or a project-root `.env` file (same value; deprecated `TINY_ENGINEER_TOKEN` / `TINY_ENGINEER_URL` are still read when the `VIBEBOT_*` names are unset). The CLI sends `Authorization: Bearer …`. No token → no header (auth disabled on device).
 - `--help` for usage and event map.
 
 ### Smoke test
 
 ```bash
-npx -y --package=https://github.com/jamro/tiny-engineer/archive/refs/heads/main.tar.gz tiny-engineer-cursor --help
-echo '{"hook_event_name":"stop"}' | npx -y --package=https://github.com/jamro/tiny-engineer/archive/refs/heads/main.tar.gz tiny-engineer-cursor
+npx -y --package=https://github.com/autosolutionsai-didac/tiny-engineer/archive/refs/heads/main.tar.gz vibebot-cursor --help
+echo '{"hook_event_name":"stop"}' | npx -y --package=https://github.com/autosolutionsai-didac/tiny-engineer/archive/refs/heads/main.tar.gz vibebot-cursor
 ```
 
 ### Wire into any Cursor project
@@ -138,7 +138,7 @@ In that project’s `.cursor/hooks.json`, use the same command for each anim hoo
 Inside this firmware repo you can instead run the local bin while developing the CLI:
 
 ```bash
-node packages/tiny-engineer-cursor/bin/tiny-engineer-cursor.js
+node packages/vibebot-cursor/bin/vibebot-cursor.js
 ```
 
 ---
@@ -157,16 +157,16 @@ For [Google Antigravity](https://github.com/google/antigravity) (`antigravity-cl
 
 ### Setup
 
-Inside this firmware repository, [`.agents/hooks.json`](../.agents/hooks.json) is pre-configured. Run the local bin: `node packages/tiny-engineer-antigravity/bin/tiny-engineer-antigravity.js`. Other machines can `npx -y --package=https://github.com/jamro/tiny-engineer/archive/refs/heads/main.tar.gz tiny-engineer-antigravity` (same tarball pattern as Cursor).
+Inside this firmware repository, [`.agents/hooks.json`](../.agents/hooks.json) is pre-configured. Run the local bin: `node packages/vibebot-antigravity/bin/vibebot-antigravity.js`. Other machines can `npx -y --package=https://github.com/autosolutionsai-didac/tiny-engineer/archive/refs/heads/main.tar.gz vibebot-antigravity` (same tarball pattern as Cursor).
 
 To run globally across all projects on your machine, configure `~/.gemini/config/hooks.json`:
 
 ```json
 {
-  "tiny-engineer": {
+  "vibebot": {
     "PreInvocation": [
       {
-        "command": "tiny-engineer-antigravity PreInvocation",
+        "command": "vibebot-antigravity PreInvocation",
         "timeout": 3
       }
     ],
@@ -175,7 +175,7 @@ To run globally across all projects on your machine, configure `~/.gemini/config
         "matcher": "*",
         "hooks": [
           {
-            "command": "tiny-engineer-antigravity PreToolUse",
+            "command": "vibebot-antigravity PreToolUse",
             "timeout": 3
           }
         ]
@@ -186,7 +186,7 @@ To run globally across all projects on your machine, configure `~/.gemini/config
         "matcher": "*",
         "hooks": [
           {
-            "command": "tiny-engineer-antigravity PostToolUse",
+            "command": "vibebot-antigravity PostToolUse",
             "timeout": 3
           }
         ]
@@ -194,7 +194,7 @@ To run globally across all projects on your machine, configure `~/.gemini/config
     ],
     "Stop": [
       {
-        "command": "tiny-engineer-antigravity Stop",
+        "command": "vibebot-antigravity Stop",
         "timeout": 3
       }
     ]
@@ -225,15 +225,15 @@ For [Claude Code](https://code.claude.com/): a small Node CLI reads Claude Code 
 - **`Stop`** (turn finished) → `ring` (rings the physical desk bell!)
 - **`StopFailure`** → `error`
 
-To change the map, edit [`packages/tiny-engineer-claude-code/src/map.js`](../packages/tiny-engineer-claude-code/src/map.js).
+To change the map, edit [`packages/vibebot-claude-code/src/map.js`](../packages/vibebot-claude-code/src/map.js).
 
 ### Setup
 
-Inside this firmware repository, [`.claude/settings.json`](../.claude/settings.json) is pre-configured: open the repo in Claude Code (Node.js 18+) and the hooks run `node packages/tiny-engineer-claude-code/bin/tiny-engineer-claude-code.js`.
+Inside this firmware repository, [`.claude/settings.json`](../.claude/settings.json) is pre-configured: open the repo in Claude Code (Node.js 18+) and the hooks run `node packages/vibebot-claude-code/bin/vibebot-claude-code.js`.
 
 - Every hook is `"async": true`, so Claude Code runs it in the background — an offline robot never stalls a tool call on the 2s HTTP timeout.
-- Robot address: `TINY_ENGINEER_URL` or `--url http://192.168.x.x` (default `http://tiny-engineer.local`).
-- Auth: if the device has an `access_token`, set `TINY_ENGINEER_TOKEN` in the process env or a project-root `.env` file. The CLI sends `Authorization: Bearer …`. No token → no header (auth disabled on device). When the token comes from the process env, a `TINY_ENGINEER_URL` in the project `.env` is ignored, so a project can't redirect your token; set the URL in the env or with `--url`.
+- Robot address: `VIBEBOT_URL` or `--url http://192.168.x.x` (default `http://vibebot.local`).
+- Auth: if the device has an `access_token`, set `VIBEBOT_TOKEN` in the process env or a project-root `.env` file (deprecated `TINY_ENGINEER_TOKEN` / `TINY_ENGINEER_URL` are still read when the `VIBEBOT_*` names are unset). The CLI sends `Authorization: Bearer …`. No token → no header (auth disabled on device). When the token comes from the process env, a `VIBEBOT_URL` (or `TINY_ENGINEER_URL`) in the project `.env` is ignored, so a project can't redirect your token; set the URL in the env or with `--url`.
 - The CLI never writes to stdout in hook mode — Claude Code adds `SessionStart` / `UserPromptSubmit` hook stdout to the model's context.
 - If a hook never fires, run `/hooks` inside Claude Code to confirm the project settings loaded.
 
@@ -242,8 +242,8 @@ To use it in every project, copy the `hooks` block into `~/.claude/settings.json
 ### Smoke test
 
 ```bash
-node packages/tiny-engineer-claude-code/bin/tiny-engineer-claude-code.js --help
-echo '{"hook_event_name":"Stop"}' | node packages/tiny-engineer-claude-code/bin/tiny-engineer-claude-code.js
+node packages/vibebot-claude-code/bin/vibebot-claude-code.js --help
+echo '{"hook_event_name":"Stop"}' | node packages/vibebot-claude-code/bin/vibebot-claude-code.js
 ```
 
 ---
@@ -271,10 +271,10 @@ flowchart LR
 
 ```bash
 npm install -g ./packages/vibebot-hub          # vibebot-hub + vibebot-send on PATH
-vibebot-hub --robot http://tiny-engineer.local  # VIBEBOT_URL / TINY_ENGINEER_URL also work
+vibebot-hub --robot http://vibebot.local  # or set VIBEBOT_URL (deprecated: TINY_ENGINEER_URL)
 ```
 
-- Auth: `VIBEBOT_TOKEN` (else `TINY_ENGINEER_TOKEN`) is sent as `Authorization: Bearer …` and never logged.
+- Auth: `VIBEBOT_TOKEN` (else deprecated `TINY_ENGINEER_TOKEN`) is sent as `Authorization: Bearer …` and never logged.
 - Run at login: [launchd plist](../packages/vibebot-hub/examples/com.vibebot.hub.plist) (macOS) or [systemd user unit](../packages/vibebot-hub/examples/vibebot-hub.service) (Linux). On SIGTERM the hub posts `state=ended` for every session.
 - Hub status: `curl http://127.0.0.1:17826/sessions` and `/health`.
 - `vibebot-send` never writes to stdout, which Claude Code and Codex would feed to the model, and always exits 0 within about 1 s, even when the hub is down. The one exception is Antigravity, which gets the decision JSON it requires.
@@ -339,7 +339,7 @@ Full event → state tables, hub routes and behaviour: [`packages/vibebot-hub/RE
 - **Several agents or windows at once** → session hub (`vibebot-hub`), or the AgentDeck daemon with no hub.
 - **The four `/anim` paths** are fine together: the CLIs are thin clients of the same `/anim` API. The session hub replaces them for the agents it covers.
 
-Prerequisites for any path: flash firmware, join 2.4 GHz Wi-Fi, confirm `http://tiny-engineer.local/health` (or the OLED IP) responds.
+Prerequisites for any path: flash firmware, join 2.4 GHz Wi-Fi, confirm `http://vibebot.local/health` (or the OLED IP) responds.
 
 ---
 

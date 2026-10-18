@@ -1,6 +1,6 @@
 import { DEFAULT_PORT } from "./server.js";
 
-export const DEFAULT_ROBOT_URL = "http://tiny-engineer.local";
+export const DEFAULT_ROBOT_URL = "http://vibebot.local";
 
 function envValue(env, ...keys) {
   for (const k of keys) {
@@ -20,7 +20,7 @@ export function hubPortFromEnv(env = process.env) {
   return parsePort(envValue(env, "VIBEBOT_HUB_PORT")) ?? DEFAULT_PORT;
 }
 
-/** Bearer token: VIBEBOT_TOKEN, else TINY_ENGINEER_TOKEN, else null. */
+/** Bearer token: VIBEBOT_TOKEN, else deprecated TINY_ENGINEER_TOKEN, else null. */
 export function tokenFromEnv(env = process.env) {
   return envValue(env, "VIBEBOT_TOKEN", "TINY_ENGINEER_TOKEN") ?? null;
 }

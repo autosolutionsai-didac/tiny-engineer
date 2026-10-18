@@ -19,7 +19,7 @@
 #endif
 #endif
 
-namespace tiny_engineer {
+namespace vibebot {
 namespace expressions {
 
 enum class Expression : uint8_t {
@@ -63,4 +63,4 @@ bool render(Expression expression, uint32_t elapsedMs,
             uint8_t* output, std::size_t outputSize);
 
 }  // namespace expressions
-}  // namespace tiny_engineer
+}  // namespace vibebot

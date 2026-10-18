@@ -1,6 +1,8 @@
 # From Code to Circuits: Hardware for Software Engineers
 
-*Learn electronics and physical builds through Tiny Engineer — a desk robot that's fun to finish and honest about real hardware.*
+> **Attribution:** this guide was written by Krzysztof Jamroz for the upstream [Tiny Engineer](https://github.com/jamro/tiny-engineer) project, on which Vibe Bot is based. The first-person voice below is his. Vibe Bot adapts the text for this fork; chapter examples that mention the ESP32-C3 describe the legacy build — the current Seeed XIAO ESP32S3 build is documented in [hardware/](../hardware/README.md).
+
+*Learn electronics and physical builds through Vibe Bot — a desk robot that's fun to finish and honest about real hardware.*
 
 I wrote this because software engineers keep asking how to build Tiny Engineer when they've never touched the hardware side — what's a servo driver, why two voltages, whether they'll destroy the board on first power-on. The build docs tell you *what to connect*; this guide answers the questions behind them.
 
@@ -8,17 +10,17 @@ I wrote this because software engineers keep asking how to build Tiny Engineer w
 
 ## Goal
 
-**Bring the world of electronics and hardware closer to software engineers** — especially the ones showing up with Tiny Engineer parts and no hardware background.
+**Bring the world of electronics and hardware closer to software engineers** — especially the ones showing up with Vibe Bot parts and no hardware background.
 
 If you live in code, hardware docs can feel like a foreign API with no types and no stack traces. This guide closes that gap: same systems thinking you already use — buses, power budgets, failure modes — applied to volts, GPIO, and printed plastic. It's the long-form version of answers I give when someone says *"I'm a developer, I just want the robot to work."*
 
 **Why now:** AI makes writing code fast and cheap. Hardware stays tangible, constrained, and extremely satisfying when something on your desk actually moves because *you* wired it.
 
-**Why Tiny Engineer as the example:** one coherent stack (MCU, I2C, I2S, power domains, 3D print, servos) — real enough to teach honest hardware, bounded enough to finish if you stick with it. It also ties back to software via Wi-Fi and HTTP, which helps the mental bridge.
+**Why Vibe Bot as the example:** one coherent stack (MCU, I2C, I2S, power domains, 3D print, servos) — real enough to teach honest hardware, bounded enough to finish if you stick with it. It also ties back to software via Wi-Fi and HTTP, which helps the mental bridge.
 
 **What you'll get out of it:** read datasheets, schematics, and embedded docs without feeling like an outsider — whether you build this robot or the next board on your bench.
 
-**Honest expectation:** Tiny Engineer was never meant to be an entry-level electronics kit (no single-LED breadboard tutorial). Overall difficulty is **medium**. It can still be your **first hardware project** as a software engineer — if you read alongside the build, smoke-test the harness on the desk (wire + flash) before closing the shell, and don't treat "first" as "trivial." See [difficulty by area](#honest-difficulty-by-area) below.
+**Honest expectation:** Vibe Bot was never meant to be an entry-level electronics kit (no single-LED breadboard tutorial). Overall difficulty is **medium**. It can still be your **first hardware project** as a software engineer — if you read alongside the build, smoke-test the harness on the desk (wire + flash) before closing the shell, and don't treat "first" as "trivial." See [difficulty by area](#honest-difficulty-by-area) below.
 
 ---
 
@@ -28,13 +30,13 @@ Tiny Engineer is one project in that line. I'd recommend this path to any softwa
 
 **What this is:** a bridge into electronics, microcontrollers, power, protocols, and mechanical build craft — taught with software-engineer mental models.
 
-**What this is not:** only a Tiny Engineer assembly manual. When you're ready to build step by step, use [getting-started.md](../getting-started.md) (checklist), [flash.md](../flash.md), and the [hardware reference](../hardware/README.md).
+**What this is not:** only a Vibe Bot assembly manual. When you're ready to build step by step, use [getting-started.md](../getting-started.md) (checklist), [flash.md](../flash.md), and the [hardware reference](../hardware/README.md).
 
 ---
 
-## Why Tiny Engineer is the example
+## Why Vibe Bot is the example
 
-Every chapter teaches a **general concept**, then shows **where it lands in this build**. Tiny Engineer gives you real constraints — 3.3 V vs 5 V domains, shared I2C, offloaded servo PWM, print tolerances, antenna keep-out — without throwing you into a parts warehouse with no narrative. Finish the robot if you want the payoff; the vocabulary transfers to other ESP32, Arduino, or IoT projects either way.
+Every chapter teaches a **general concept**, then shows **where it lands in this build**. Vibe Bot gives you real constraints — 3.3 V vs 5 V domains, shared I2C, offloaded servo PWM, print tolerances, antenna keep-out — without throwing you into a parts warehouse with no narrative. Finish the robot if you want the payoff; the vocabulary transfers to other ESP32, Arduino, or IoT projects either way.
 
 It's a good **first hardware project for a software engineer**. It is **not** a good **first project in electronics** in the abstract — compare it to a blinking-LED kit and this is several notches up. This guide exists because those two truths collide constantly in questions from SWEs who want to build the robot anyway.
 
@@ -75,7 +77,7 @@ If you've never touched a multimeter, budget extra time on [Ch. 01](01-electrici
 ## Who should read this
 
 **Read this if you:**
-- Write code for a living and want to build Tiny Engineer (or similar) without a hardware background
+- Write code for a living and want to build Vibe Bot (or similar) without a hardware background
 - Got the parts or the repo and hit questions the assembly docs don't pause to explain
 - Know what HTTP is but not what I2C is
 - Can follow a tutorial but want to understand what you're doing

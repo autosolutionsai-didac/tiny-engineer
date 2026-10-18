@@ -1,22 +1,22 @@
-import { getToken, loadDotEnv } from "./env.js";
+import { DEFAULT_URL, getBaseUrl, getToken, loadDotEnv } from "./env.js";
 import { animationForEvent } from "./map.js";
 import { postAnim } from "./post.js";
 
-const DEFAULT_URL = "http://tiny-engineer.local";
-
 function printHelp() {
-  console.log(`Usage: tiny-engineer-cursor [options]
+  console.log(`Usage: vibebot-cursor [options]
 
 Cursor hook helper: read event JSON from stdin, pick an animation, POST to the robot.
 
 Options:
-  --url <base>   Robot base URL (default: ${DEFAULT_URL})
+  --url <base>   Robot base URL (default: VIBEBOT_URL, else ${DEFAULT_URL})
   -h, --help     Show this help
 
 Auth:
-  If TINY_ENGINEER_TOKEN is set (process env or project-root .env), requests
+  If VIBEBOT_TOKEN is set (process env or project-root .env), requests
   send Authorization: Bearer <token>. Must match the device access_token.
   No token → no Authorization header (device auth disabled).
+  TINY_ENGINEER_TOKEN / TINY_ENGINEER_URL are still read as deprecated
+  fallbacks when the VIBEBOT_* names are unset.
 
 Hook mode (no animation args):
   Cursor pipes JSON with hook_event_name (tool_name for preToolUse,
@@ -36,19 +36,19 @@ Event map:
   other preToolUse tools                            → (skip)
 
 Examples:
-  echo '{"hook_event_name":"stop","status":"completed"}' | tiny-engineer-cursor
-  echo '{"hook_event_name":"stop","status":"aborted"}' | tiny-engineer-cursor
-  echo '{"hook_event_name":"stop","status":"error"}' | tiny-engineer-cursor
-  echo '{"hook_event_name":"preToolUse","tool_name":"Read"}' | tiny-engineer-cursor --url http://192.168.1.10
+  echo '{"hook_event_name":"stop","status":"completed"}' | vibebot-cursor
+  echo '{"hook_event_name":"stop","status":"aborted"}' | vibebot-cursor
+  echo '{"hook_event_name":"stop","status":"error"}' | vibebot-cursor
+  echo '{"hook_event_name":"preToolUse","tool_name":"Read"}' | vibebot-cursor --url http://192.168.1.10
 `);
 }
 
 /**
  * @param {string[]} argv
- * @returns {{ help: boolean, url: string, error?: string }}
+ * @returns {{ help: boolean, url?: string, error?: string }}
  */
 export function parseArgs(argv) {
-  let url = DEFAULT_URL;
+  let url;
   let help = false;
 
   for (let i = 0; i < argv.length; i++) {
@@ -119,7 +119,7 @@ export async function run(argv) {
 
   const anim = animationForEvent(event);
   if (anim) {
-    await postAnim(opts.url, anim, getToken());
+    await postAnim(opts.url ?? getBaseUrl(), anim, getToken());
   }
   process.exitCode = 0;
 }

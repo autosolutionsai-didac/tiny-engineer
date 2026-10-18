@@ -19,6 +19,6 @@
   "engines": {
     "node": ">=18"
   },
-  "keywords": ["claude-code", "cursor", "codex", "antigravity", "robot", "tiny-engineer"],
+  "keywords": ["claude-code", "cursor", "codex", "antigravity", "robot", "vibebot"],
   "license": "MIT"
 }

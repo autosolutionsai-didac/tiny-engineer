@@ -1,10 +1,10 @@
 {
-  "name": "tiny-engineer-cursor",
+  "name": "vibebot-cursor",
   "version": "0.1.0",
-  "description": "Cursor hooks CLI that drives Tiny Engineer robot animations over HTTP",
+  "description": "Cursor hooks CLI that drives Vibe Bot robot animations over HTTP",
   "type": "module",
   "bin": {
-    "tiny-engineer-cursor": "./bin/tiny-engineer-cursor.js"
+    "vibebot-cursor": "./bin/vibebot-cursor.js"
   },
   "scripts": {
     "test": "node --test"

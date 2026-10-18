@@ -472,7 +472,7 @@ def main(argv: list[str] | None = None) -> int:
 
     owned_temp: Path | None = None
     if report_root is None:
-        owned_temp = Path(tempfile.mkdtemp(prefix="tiny-engineer-pcb-"))
+        owned_temp = Path(tempfile.mkdtemp(prefix="vibebot-pcb-"))
         report_root = owned_temp
     else:
         report_root = report_root.resolve()

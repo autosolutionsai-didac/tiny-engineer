@@ -4,7 +4,7 @@
 #include <cstdint>
 
 constexpr uint32_t SETTINGS_DEFAULT_SLEEP_TIMEOUT_MIN = 10;
-constexpr const char* SETTINGS_DEFAULT_HOSTNAME = "tiny-engineer";
+constexpr const char* SETTINGS_DEFAULT_HOSTNAME = "vibebot";
 constexpr uint8_t SETTINGS_DEFAULT_VOLUME = 70;
 constexpr bool SETTINGS_DEFAULT_WELCOME = true;
 constexpr bool SETTINGS_DEFAULT_SERIAL_LOG = false;

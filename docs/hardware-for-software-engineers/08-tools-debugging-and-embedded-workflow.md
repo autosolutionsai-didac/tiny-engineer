@@ -1,6 +1,6 @@
 # Tools, debugging, and embedded workflow
 
-You don't need an oscilloscope to do useful hardware. You need patience, a multimeter, serial logs, and the discipline to bisect problems like you would in production. This workflow applies to any MCU project; Tiny Engineer is what you'll bench-debug first.
+You don't need an oscilloscope to do useful hardware. You need patience, a multimeter, serial logs, and the discipline to bisect problems like you would in production. This workflow applies to any MCU project; Vibe Bot is what you'll bench-debug first.
 
 ---
 

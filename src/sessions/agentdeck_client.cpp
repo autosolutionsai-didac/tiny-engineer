@@ -1,4 +1,4 @@
-// AgentDeck client for Tiny Engineer.
+// AgentDeck client for Vibe Bot (based on the Tiny Engineer firmware).
 //
 // mDNS discovery and the WebSocket event handling are adapted from AgentDeck
 // (esp32/src/net/mdns_discovery.cpp, ws_client.cpp, protocol.cpp),

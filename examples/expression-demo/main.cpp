@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <TinyEngineerExpressions.h>
+#include <VibeBotExpressions.h>
 
 #include "pins.h"
 
@@ -12,7 +12,7 @@
 #endif
 
 namespace {
-namespace expressions = tiny_engineer::expressions;
+namespace expressions = vibebot::expressions;
 
 constexpr uint8_t kRotation = EXPRESSION_DEMO_ROTATION;
 static_assert(kRotation == 0 || kRotation == 2,

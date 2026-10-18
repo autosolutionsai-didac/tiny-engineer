@@ -40,9 +40,9 @@ Both sources can be active at the same time; `GET /sessions` reports `source` = 
 A small zero-dependency Node service on your computer (`packages/vibebot-hub`). Agent hooks call the `vibebot-send <agent>` shim, the hub keeps its own session table and pushes it to the robot:
 
 ```bash
-curl -X POST "http://tiny-engineer.local/session?id=cc-1&state=working&activity=reading&agent=claude-code&label=my-repo"
-curl http://tiny-engineer.local/sessions
-curl -X POST "http://tiny-engineer.local/sessions/clear"
+curl -X POST "http://vibebot.local/session?id=cc-1&state=working&activity=reading&agent=claude-code&label=my-repo"
+curl http://vibebot.local/sessions
+curl -X POST "http://vibebot.local/sessions/clear"
 ```
 
 The hub coalesces updates (≤ 4 posts/s), re-posts every live session every 60 s, sends `state=ended` when a session ends, and calls `POST /sessions/clear` on startup. Use `Authorization: Bearer <token>` when the robot has an `access_token`. Params and responses: [api.md#sessions](api.md#sessions).

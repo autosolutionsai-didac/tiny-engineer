@@ -21,7 +21,7 @@ Build/flash: [flash.md](../flash.md) (`pio run`, `pio run -t upload`, serial 115
 | I2C init | `Wire.begin` on SDA/SCL (XIAO: GPIO5/GPIO6 = D4/D5; C3: GPIO0/GPIO1) |
 | PCA9685 | Probe `0x40` early; park neutral. XIAO: OE on GPIO4/D3 held HIGH (off) until PWM positions load, then LOW (enabled). C3: OE skipped (`PCA9685_OE_WIRED` is false until GP5→OE is implemented) |
 | OLED | Probe `0x3C`, init (optional) |
-| Wi-Fi | STA connect from saved NVS credentials, or setup AP `TinyEngineer-XXXX` when unset/failed; mDNS `{hostname}.local` after STA connect |
+| Wi-Fi | STA connect from saved NVS credentials, or setup AP `VibeBot-XXXX` when unset/failed; mDNS `{hostname}.local` after STA connect |
 | MAX98357A / I2S | `I2S.begin` 44.1 kHz 16-bit stereo |
 | Servos | Smooth move to mid (or sleep pose) at 35°/s |
 | HTTP | Port 80 when STA connected, or on setup AP at `192.168.4.1` |
@@ -45,7 +45,7 @@ silent, which makes the LED the only signal a first-boot board gives you.
 
 ## Expected boot sequence
 
-1. Serial banner `TINY ENGINEER`
+1. Serial banner `VIBE BOT`
 2. `Starting I2C` / `SDA = GP0` / `SCL = GP1`
 3. `Checking PCA9685 at 0x40...` → **must** succeed; all channels parked at mid
 4. `Checking OLED at 0x3C...` → found or `ERROR: OLED not found` (continues)
@@ -57,7 +57,7 @@ silent, which makes the LED the only signal a first-boot board gives you.
 10. `Centering servos` — smooth move to per-channel mid (progress path only; skipped if sleep pose already applied)
 11. `ROBOT READY`
 12. RGB fades to white over 1 s if `welcome` runs (Wi-Fi OK and setting enabled), or fades off if idle
-13. If Wi-Fi OK: `HTTP: http://<ip>/`, `HTTP: http://tiny-engineer.local/`, and `/health` URLs on serial
+13. If Wi-Fi OK: `HTTP: http://<ip>/`, `HTTP: http://vibebot.local/`, and `/health` URLs on serial
 14. If setup AP active: `HTTP setup: http://192.168.4.1/config` on serial; OLED rotates setup instructions
 
 `loop()` pumps the HTTP server and updates animation RGB fades. No audio/OLED/servo/LED demos until a POST.
@@ -75,7 +75,7 @@ During normal operation the lamp LED (chain index 0 on XIAO; onboard WS2812 on C
 
 State changes fade over **1 s** (see [`docs/api.md`](../api.md#rgb-led)). Trigger via `POST /anim?name=…` or agent hooks / CLIs.
 
-XIAO build: LEDs 1–8 are the session bar (dim green idle, cyan breathing working, amber pulse waiting, red error, green flash on finish). Quick check without an agent: `curl -X POST "http://tiny-engineer.local/session?id=t1&state=working"`, then `state=idle`, then `state=ended` — see [api.md](../api.md#session-led-bar).
+XIAO build: LEDs 1–8 are the session bar (dim green idle, cyan breathing working, amber pulse waiting, red error, green flash on finish). Quick check without an agent: `curl -X POST "http://vibebot.local/session?id=t1&state=working"`, then `state=idle`, then `state=ended` — see [api.md](../api.md#session-led-bar).
 
 OLED shows matching status strings when the panel is present (progress loading: WiFi step labels; sleep inertia: eyes only).
 
@@ -83,26 +83,26 @@ OLED shows matching status strings when the panel is present (progress loading: 
 
 API reference: [`docs/api.md`](../api.md).
 
-Base URL is the board IP or `http://tiny-engineer.local` (2.4 GHz STA). Tests have side effects — use **POST**, not GET.
+Base URL is the board IP or `http://vibebot.local` (2.4 GHz STA). Tests have side effects — use **POST**, not GET.
 
 ```bash
 # Health
-curl http://tiny-engineer.local/health
+curl http://vibebot.local/health
 
 # Tones 500 / 700 / 1000 Hz
-curl -X POST http://tiny-engineer.local/test/audio
+curl -X POST http://vibebot.local/test/audio
 
 # OLED title / HELLO / X in a box
-curl -X POST http://tiny-engineer.local/test/screen
+curl -X POST http://vibebot.local/test/screen
 
 # Servos mid → +0.5 → −0.5 → mid of saved range (channels 0–4)
-curl -X POST http://tiny-engineer.local/test/movement
+curl -X POST http://vibebot.local/test/movement
 
 # WS2812 lamp (+ XIAO session bar) R → G → B → white → off, then back to current animation LED
-curl -X POST http://tiny-engineer.local/test/led
+curl -X POST http://vibebot.local/test/led
 
 # One servo smooth move to angle (~140°/s; index 0–4, angle 0–180)
-curl -X POST "http://tiny-engineer.local/test/servo?index=0&angle=90"
+curl -X POST "http://vibebot.local/test/servo?index=0&angle=90"
 ```
 
 | Method | Path | Body |

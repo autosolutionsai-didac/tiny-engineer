@@ -9,7 +9,7 @@ static const char INDEX_HTML[] = R"html(<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tiny Engineer</title>
+<title>Vibe Bot</title>
 <style>
 :root{--bg:#faf9f7;--text:#1a1a1a;--muted:#666;--accent:#e85d04;--accent-hover:#d45304;--card:#fff;--border:#e0ddd8;--success:#2d6a4f;--error:#c1121f;--loading:#555}
 *{box-sizing:border-box}
@@ -205,7 +205,7 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 
 <section id="view-home" class="view">
 <div class="hero">
-<h1>Tiny Engineer</h1>
+<h1>Vibe Bot</h1>
 <p>A desk robot that acts out your AI coding assistant while it works.</p>
 </div>
 <div id="health-info" class="info-strip">Loading status&hellip;</div>
@@ -215,7 +215,7 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 <a class="card" href="/tests"><h3>Hardware tests</h3><p>Try the speaker, screen, LEDs, and servo sweep.</p></a>
 <a class="card" href="/config"><h3>Config</h3><p>Device name, timeouts, volume, eyes style, boot behavior, serial logging, and API token. WiFi is set in setup mode after factory reset; servo ranges, screen orientation, and RGB mapping can be retuned there too.</p></a>
 <a class="card" href="/api"><h3>API reference</h3><p>Full endpoint list, parameters, and curl-friendly docs.</p></a>
-<a class="card card-github" href="https://github.com/jamro/tiny-engineer" target="_blank" rel="noopener"><h3>GitHub docs &rarr;</h3><p>Build guide, wiring, and full project docs.</p></a>
+<a class="card card-github" href="https://github.com/autosolutionsai-didac/tiny-engineer" target="_blank" rel="noopener"><h3>GitHub docs &rarr;</h3><p>Build guide, wiring, and full project docs.</p></a>
 </div>
 </section>
 
@@ -394,7 +394,7 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 <h2 class="page-title" id="config-page-title">Config</h2>
 <p class="page-desc" id="config-page-desc">Saved to flash. Most changes apply right away.</p>
 <div id="setup-wizard">
-<h2 class="page-title">Tiny Engineer setup</h2>
+<h2 class="page-title">Vibe Bot setup</h2>
 <p id="setup-progress-label" class="page-desc">Step 1 of 5 &middot; Servos</p>
 <div class="setup-progress-track"><div id="setup-progress-bar" class="setup-progress-bar"></div></div>
 <div id="setup-step-servos">
@@ -642,7 +642,7 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 </section>
 
 <footer>
-<a href="https://github.com/jamro/tiny-engineer" target="_blank" rel="noopener">github.com/jamro/tiny-engineer</a>
+<a href="https://github.com/autosolutionsai-didac/tiny-engineer" target="_blank" rel="noopener">Vibe Bot on GitHub</a> &middot; Based on <a href="https://github.com/jamro/tiny-engineer" target="_blank" rel="noopener">Tiny Engineer</a> by Krzysztof Jamroz
 </footer>
 
 <script>

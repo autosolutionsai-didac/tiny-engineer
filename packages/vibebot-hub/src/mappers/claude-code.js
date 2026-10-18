@@ -2,7 +2,7 @@ import { activityForTool, baseName, firstString } from "../util.js";
 
 /**
  * Claude Code hook → session update. Mirrors the semantics of
- * packages/tiny-engineer-claude-code/src/map.js, but as session state:
+ * packages/vibebot-claude-code/src/map.js, but as session state:
  * poses that meant "busy" become working (+activity), attention becomes
  * waiting, error stays error, ring (turn finished) becomes idle and sleep
  * becomes ended.
