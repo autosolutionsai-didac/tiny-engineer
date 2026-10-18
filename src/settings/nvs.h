@@ -20,6 +20,7 @@ constexpr const char* kKeyWifiPass = "wifi_pass";
 constexpr const char* kKeyServoRanges = "sranges";
 constexpr const char* kKeyRgbOrder = "rgb_ord";
 constexpr const char* kKeyOledRot = "oled_rot";
+constexpr const char* kKeyAgentDeck = "agentdeck";
 constexpr size_t kServoRangesLen = SETTINGS_SERVO_COUNT * 2;
 
 extern Preferences g_settingsPrefs;
@@ -56,7 +57,8 @@ void settingsNvsPutAll(
   const uint8_t* servoMins,
   const uint8_t* servoMaxs,
   const char* rgbOrder,
-  bool oledRotate180
+  bool oledRotate180,
+  bool agentdeck
 );
 
 bool writeAllToNvs(
@@ -74,5 +76,6 @@ bool writeAllToNvs(
   const uint8_t* servoMins,
   const uint8_t* servoMaxs,
   const char* rgbOrder,
-  bool oledRotate180
+  bool oledRotate180,
+  bool agentdeck
 );

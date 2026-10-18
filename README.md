@@ -27,13 +27,14 @@ An AI agent works; an integration turns that into events; the robot’s REST API
 - **Claude Code** — Claude Code → project hooks → `tiny-engineer-claude-code` script → HTTP over Wi-Fi
 - **Bring your own** — Codex or any other agent → your script/plugin/app → HTTP REST
 
-All hit the same Tiny Engineer REST API (`/anim`). The ESP32-C3 runs that API, robot logic, and animations, then drives (and plays audio):
+All hit the same Tiny Engineer REST API (`/anim`, or `/session` for multi-session state). The ESP32 (Seeed XIAO ESP32S3; legacy ESP32-C3-Zero) runs that API, robot logic, and animations, then drives (and plays audio):
 
 | Hardware | Role |
 | --- | --- |
 | PCA9685 → 5× servos | Head / neck, hands / body |
 | Waveshare 0.91inch OLED (SSD1306) | Status, face, info |
 | MAX98357A → speaker | Audio |
+| WS2812B chain (XIAO build) | Lamp LED + 8-LED session bar |
 
 Cursor is one example client, not the architecture. Details: [Cursor hooks](docs/hooks.md) · [any integration](docs/integration.md) · [HTTP API](docs/api.md)
 
@@ -49,7 +50,7 @@ Major pieces (exact models and counts in the BOM):
 
 | Role | Part | Qty |
 | --- | --- | --- |
-| Main Controller | [Waveshare ESP32-C3-Zero](https://www.waveshare.com/esp32-c3-zero.htm) | 1 |
+| Main Controller | [Seeed Studio XIAO ESP32S3](https://www.seeedstudio.com/XIAO-ESP32S3-p-5627.html) (legacy build: [Waveshare ESP32-C3-Zero](https://www.waveshare.com/esp32-c3-zero.htm), `pio run -e esp32-c3-devkitm-1`) | 1 |
 | Servo Controller PWM | [Adafruit PCA9685](https://www.adafruit.com/product/815) | 1 |
 | Actuators | Analog micro servos — **Tower Pro SG90 recommended**; Feetech FS0307 for a compact build; Parametrically designed for any standard micro servos | 5 |
 | Display | [Waveshare 0.91inch OLED Module](https://www.waveshare.com/0.91inch-oled-module.htm) (SSD1306, 128×32, I2C) | 1 |
@@ -95,6 +96,8 @@ curl -X POST "http://tiny-engineer.local/anim?name=typing"
 ```
 
 Useful `name` values: `typing`, `reading`, `thinking`, `ring`, `welcome`, `wakeup`, `sleep`, `attention`, `error`, `abort`, `dead`, `none`.
+
+**Several agents at once:** report each session with `POST /session?id=…&state=idle|working|waiting|error|ended[&activity=typing|reading|thinking][&agent=…][&label=…]` (list: `GET /sessions`, reset: `POST /sessions/clear`). The robot picks one animation by priority and shows every session on the LED bar. Sessions come from the `vibebot-hub` REST pusher or an AgentDeck daemon on the LAN (`agentdeck` setting, default on) — [docs/sessions.md](docs/sessions.md).
 
 Cursor projects can map agent events to poses via hooks — [docs/hooks.md](docs/hooks.md). Broader patterns and examples: [docs/integration.md](docs/integration.md). Optional extra: sleep/wake when you lock or unlock a Mac — [docs/macos-lock-unlock.md](docs/macos-lock-unlock.md).
 

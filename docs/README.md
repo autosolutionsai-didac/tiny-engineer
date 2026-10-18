@@ -25,6 +25,7 @@ Pick a path. Depth lives in the linked pages.
 | **Contribute a PCB** (KiCad) | [pcb.md](pcb.md) → [`hardware/`](../hardware/README.md) |
 | **HTTP API / settings** | [api.md](api.md); add a setting: [settings.md](settings.md) |
 | **Any IDE / scripts** | [integration.md](integration.md) |
+| **Several agent sessions at once** | [sessions.md](sessions.md) |
 | **Firmware / package tests** | [testing.md](testing.md) |
 | **AI coding agents (repo rules)** | [AGENTS.md](../AGENTS.md) |
 | **Contribute / report a vuln** | [CONTRIBUTING.md](../CONTRIBUTING.md); [SECURITY.md](../SECURITY.md) |

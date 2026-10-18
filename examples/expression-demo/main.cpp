@@ -4,6 +4,8 @@
 #include <Adafruit_SSD1306.h>
 #include <TinyEngineerExpressions.h>
 
+#include "pins.h"
+
 // Adafruit rotations: 0 = normal, 2 = 180 degrees. Match your mounting.
 #ifndef EXPRESSION_DEMO_ROTATION
 #define EXPRESSION_DEMO_ROTATION 0
@@ -15,9 +17,9 @@ namespace expressions = tiny_engineer::expressions;
 constexpr uint8_t kRotation = EXPRESSION_DEMO_ROTATION;
 static_assert(kRotation == 0 || kRotation == 2,
               "The 128 x 32 demo supports rotation 0 or 2");
-constexpr uint8_t kOledAddress = 0x3C;
-constexpr int kSda = 0;
-constexpr int kScl = 1;
+constexpr uint8_t kOledAddress = OLED_ADDRESS;
+constexpr int kSda = I2C_SDA;
+constexpr int kScl = I2C_SCL;
 
 Adafruit_SSD1306 display(expressions::kWidth, expressions::kHeight, &Wire, -1);
 uint8_t frame[expressions::kFrameBytes];

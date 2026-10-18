@@ -17,6 +17,7 @@ def upload_filesystem(source, target, env):
                 env.subst("$PYTHONEXE"),
                 "-m", "platformio", "run",
                 "-t", pio_target,
+                "-e", env.subst("${PIOENV}"),
                 "-d", str(project_dir),
             ],
             check=True,

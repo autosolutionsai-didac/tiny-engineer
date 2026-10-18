@@ -5,6 +5,7 @@
 
 #include "animation.h"
 #include "http/json.h"
+#include "sessions/sessions.h"
 
 namespace {
 
@@ -48,6 +49,8 @@ void handleAnimPost(WebServer& server) {
     return;
   }
 
+  // Manual override: session arbitration pauses for 15 s.
+  sessionsNoteManualAnim();
   setAnimation(id);
   sendAnimationJson(server);
 }

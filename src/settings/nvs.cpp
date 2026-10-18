@@ -67,7 +67,8 @@ void putAll(
   const uint8_t* servoMins,
   const uint8_t* servoMaxs,
   const char* rgbOrder,
-  bool oledRotate180
+  bool oledRotate180,
+  bool agentdeck
 ) {
   uint8_t servoBlob[kServoRangesLen];
   packServoRanges(servoBlob, servoMins, servoMaxs);
@@ -86,6 +87,7 @@ void putAll(
   g_settingsPrefs.putBytes(kKeyServoRanges, servoBlob, kServoRangesLen);
   g_settingsPrefs.putString(kKeyRgbOrder, rgbOrder);
   g_settingsPrefs.putBool(kKeyOledRot, oledRotate180);
+  g_settingsPrefs.putBool(kKeyAgentDeck, agentdeck);
 }
 
 }  // namespace
@@ -105,7 +107,8 @@ bool writeAllToNvs(
   const uint8_t* servoMins,
   const uint8_t* servoMaxs,
   const char* rgbOrder,
-  bool oledRotate180
+  bool oledRotate180,
+  bool agentdeck
 ) {
   if (!settingsNvsBeginWrite()) {
     serialLogPrintln("Settings: NVS write open failed");
@@ -127,7 +130,8 @@ bool writeAllToNvs(
     servoMins,
     servoMaxs,
     rgbOrder,
-    oledRotate180
+    oledRotate180,
+    agentdeck
   );
   settingsNvsEnd();
   return true;
@@ -148,7 +152,8 @@ void settingsNvsPutAll(
   const uint8_t* servoMins,
   const uint8_t* servoMaxs,
   const char* rgbOrder,
-  bool oledRotate180
+  bool oledRotate180,
+  bool agentdeck
 ) {
   putAll(
     sleepTimeoutMin,
@@ -165,6 +170,7 @@ void settingsNvsPutAll(
     servoMins,
     servoMaxs,
     rgbOrder,
-    oledRotate180
+    oledRotate180,
+    agentdeck
   );
 }

@@ -20,7 +20,8 @@ void formatServoRangeJson(char* dest, size_t destSize) {
     "\"servo_mins\":[%u,%u,%u,%u,%u],"
     "\"servo_maxs\":[%u,%u,%u,%u,%u],"
     "\"rgb_order\":\"%s\","
-    "\"oled_rotate_180\":%s",
+    "\"oled_rotate_180\":%s,"
+    "\"agentdeck\":\"%s\"",
     static_cast<unsigned>(settingsServoMin(0)),
     static_cast<unsigned>(settingsServoMin(1)),
     static_cast<unsigned>(settingsServoMin(2)),
@@ -32,7 +33,8 @@ void formatServoRangeJson(char* dest, size_t destSize) {
     static_cast<unsigned>(settingsServoMax(3)),
     static_cast<unsigned>(settingsServoMax(4)),
     settingsRgbOrder(),
-    settingsOledRotate180() ? "true" : "false"
+    settingsOledRotate180() ? "true" : "false",
+    settingsAgentDeckEnabled() ? "on" : "off"
   );
 }
 
@@ -72,9 +74,9 @@ void sendSettingsJson(
   bool rebootRequired,
   bool wifiConnectSuccess
 ) {
-  char servoJson[176];
+  char servoJson[200];
   formatServoRangeJson(servoJson, sizeof(servoJson));
-  char body[1100];
+  char body[1200];
   const char* tokenSet =
     settingsAccessTokenSet() ? "true" : "false";
   const char* wifiConfigured =
@@ -219,15 +221,16 @@ void handleSettingsPost(WebServer& server) {
   const bool hasServoMaxs = server.hasArg("servo_maxs");
   const bool hasRgbOrder = server.hasArg("rgb_order");
   const bool hasOledRotate180 = server.hasArg("oled_rotate_180");
+  const bool hasAgentDeck = server.hasArg("agentdeck");
 
   if (!hasSleep && !hasHost && !hasVolume && !hasWelcome && !hasSerialLog &&
       !hasContTo && !hasLoading && !hasEyesStyle && !hasAccessToken &&
       !hasWifiSsid && !hasWifiPassword && !hasServoMins && !hasServoMaxs &&
-      !hasRgbOrder && !hasOledRotate180) {
+      !hasRgbOrder && !hasOledRotate180 && !hasAgentDeck) {
     httpSendJson(
       server,
       400,
-      "{\"ok\":false,\"error\":\"missing sleep_timeout, hostname, volume, welcome, serial_log, continuous_timeout, loading, eyes_style, access_token, wifi_ssid, wifi_password, servo_mins, servo_maxs, rgb_order, or oled_rotate_180\"}"
+      "{\"ok\":false,\"error\":\"missing sleep_timeout, hostname, volume, welcome, serial_log, continuous_timeout, loading, eyes_style, access_token, wifi_ssid, wifi_password, servo_mins, servo_maxs, rgb_order, oled_rotate_180, or agentdeck\"}"
     );
     return;
   }
@@ -262,6 +265,8 @@ void handleSettingsPost(WebServer& server) {
   const char* rgbOrderPtr = nullptr;
   bool oledRotate180 = false;
   const bool* oledRotate180Ptr = nullptr;
+  bool agentdeck = SETTINGS_DEFAULT_AGENTDECK;
+  const bool* agentdeckPtr = nullptr;
   bool wifiConnectSuccess = false;
 
   if (hasSleep) {
@@ -598,6 +603,19 @@ void handleSettingsPost(WebServer& server) {
     oledRotate180Ptr = &oledRotate180;
   }
 
+  if (hasAgentDeck) {
+    if (!settingsParseAgentDeck(server.arg("agentdeck").c_str(), &agentdeck)) {
+      httpSendJson(
+        server,
+        400,
+        "{\"ok\":false,\"error\":\"invalid agentdeck\"}"
+      );
+      return;
+    }
+
+    agentdeckPtr = &agentdeck;
+  }
+
   bool rebootRequired = false;
 
   if (!saveSettings(
@@ -616,6 +634,7 @@ void handleSettingsPost(WebServer& server) {
         servoMaxsPtr,
         rgbOrderPtr,
         oledRotate180Ptr,
+        agentdeckPtr,
         &rebootRequired
       )) {
     if (wifiConnectSuccess) {

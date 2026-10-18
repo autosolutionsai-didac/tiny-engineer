@@ -18,6 +18,8 @@
 #include "serial_log.h"
 #include "sleep.h"
 #include "boot/boot_loading.h"
+#include "hardware/led_chain.h"
+#include "sessions/sessions.h"
 
 namespace {
 
@@ -45,8 +47,12 @@ void setup() {
 
   serialLogPrintln();
   serialLogPrintln("Starting I2C");
-  serialLogPrintln("SDA = GP0");
-  serialLogPrintln("SCL = GP1");
+  serialLogPrint("Board = ");
+  serialLogPrintln(BOARD_NAME);
+  serialLogPrint("SDA = GPIO");
+  serialLogPrintln(I2C_SDA);
+  serialLogPrint("SCL = GPIO");
+  serialLogPrintln(I2C_SCL);
 
   Wire.begin(
     I2C_SDA,
@@ -157,6 +163,7 @@ void setup() {
     startHttpServer();
   }
   initSleep();
+  initSessions();
 }
 
 void loop() {
@@ -164,8 +171,10 @@ void loop() {
   pollWifi();
   pollHttpServer();
   updateProvisioningOled(now);
+  updateSessions(now);
   updateAnimation();
   // After HTTP/anim so idle timestamp from this frame is not compared to a stale `now`.
   updateSleep(millis());
   updateRgb(now);
+  ledChainService();
 }

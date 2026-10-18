@@ -8,6 +8,7 @@
 #include "http/index_page.h"
 #include "http/json.h"
 #include "http/server_context.h"
+#include "http/session_handlers.h"
 #include "http/settings_handlers.h"
 #include "http/setup_handlers.h"
 #include "http/test_handlers.h"
@@ -46,7 +47,7 @@ void handleNotFound() {
   }
 
   if (isHttpTestPath(server.uri()) || isHttpSetupPath(server.uri()) ||
-      isSettingsOrAnimPath(server.uri())) {
+      isSettingsOrAnimPath(server.uri()) || isSessionPath(server.uri())) {
     httpSendJson(
       server,
       405,
@@ -82,6 +83,15 @@ void registerHttpRoutes() {
   });
   server.on("/anim", HTTP_POST, []() {
     httpWithWifiAndApiAuth(httpServer(), handleAnimPost);
+  });
+  server.on("/session", HTTP_POST, []() {
+    httpWithWifiAndApiAuth(httpServer(), handleSessionPost);
+  });
+  server.on("/sessions", HTTP_GET, []() {
+    httpWithWifiAndApiAuth(httpServer(), handleSessionsGet);
+  });
+  server.on("/sessions/clear", HTTP_POST, []() {
+    httpWithWifiAndApiAuth(httpServer(), handleSessionsClear);
   });
   server.on("/settings", HTTP_GET, []() {
     httpWithApiAuth(httpServer(), handleSettingsGet);

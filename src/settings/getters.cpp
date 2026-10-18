@@ -94,3 +94,7 @@ const char* settingsRgbOrder() {
 bool settingsOledRotate180() {
   return g_oledRotate180;
 }
+
+bool settingsAgentDeckEnabled() {
+  return g_agentdeck;
+}
