@@ -15,7 +15,8 @@ void test_hostname_rejects_invalid() {
 }
 
 void test_hostname_accepts_valid() {
-  TEST_ASSERT_TRUE(settingsValidateHostname("tiny-engineer"));
+  TEST_ASSERT_TRUE(settingsValidateHostname("vibebot"));
+  TEST_ASSERT_TRUE(settingsValidateHostname("vibe-bot"));
   TEST_ASSERT_TRUE(
     settingsValidateHostname("abcdefghijklmnopqrstuvwxyz01234")
   );
@@ -132,6 +133,21 @@ void test_rgb_order() {
   TEST_ASSERT_FALSE(settingsValidateRgbOrder(nullptr));
 }
 
+void test_agentdeck() {
+  bool on = false;
+  TEST_ASSERT_TRUE(settingsParseAgentDeck("on", &on));
+  TEST_ASSERT_TRUE(on);
+  TEST_ASSERT_TRUE(settingsParseAgentDeck("off", &on));
+  TEST_ASSERT_FALSE(on);
+  TEST_ASSERT_TRUE(settingsParseAgentDeck("1", &on));
+  TEST_ASSERT_TRUE(on);
+  TEST_ASSERT_TRUE(settingsParseAgentDeck("0", nullptr));
+  TEST_ASSERT_FALSE(settingsParseAgentDeck("ON", &on));
+  TEST_ASSERT_FALSE(settingsParseAgentDeck("", &on));
+  TEST_ASSERT_FALSE(settingsParseAgentDeck(nullptr, &on));
+  TEST_ASSERT_TRUE(SETTINGS_DEFAULT_AGENTDECK);
+}
+
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_hostname_rejects_invalid);
@@ -146,5 +162,6 @@ int main() {
   RUN_TEST(test_wifi_password);
   RUN_TEST(test_servo_ranges);
   RUN_TEST(test_rgb_order);
+  RUN_TEST(test_agentdeck);
   return UNITY_END();
 }

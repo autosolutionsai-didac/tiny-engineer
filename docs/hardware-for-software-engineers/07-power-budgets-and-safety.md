@@ -1,6 +1,6 @@
 # Power budgets and safety
 
-Software crashes give you a stack trace. Power problems give you "it worked until I ran an animation" and random reboots. This chapter is capacity planning for electrons — any design that pairs a microcontroller with motors or audio will hit the same wall. Tiny Engineer's five servos make the math honest.
+Software crashes give you a stack trace. Power problems give you "it worked until I ran an animation" and random reboots. This chapter is capacity planning for electrons — any design that pairs a microcontroller with motors or audio will hit the same wall. Vibe Bot's five servos make the math honest.
 
 ---
 
@@ -38,7 +38,7 @@ That's **before** Wi-Fi, display, and audio peaks.
 
 ---
 
-## Tiny Engineer power budget story
+## Vibe Bot power budget story
 
 Walk through a bad scenario:
 
@@ -136,7 +136,7 @@ Static discharge can kill sensitive chips. Touch grounded metal before handling 
 
 ---
 
-## In Tiny Engineer — domain diagram
+## In Vibe Bot — domain diagram
 
 ```mermaid
 flowchart TB

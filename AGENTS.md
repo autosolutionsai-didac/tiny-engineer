@@ -6,7 +6,7 @@ Driving the robot from an IDE or script is a separate concern — use [docs/inte
 
 ## Project
 
-Tiny Engineer is an open-source ESP32-C3 Wi-Fi desk robot: 3D-printed mechanics, REST-controlled animations, and Node packages that map agent hooks to poses.
+Vibe Bot is an open-source ESP32 Wi-Fi desk robot: 3D-printed mechanics, REST-controlled animations, a multi-session LED bar, and Node packages that map agent hooks to poses. It is a fork of [Tiny Engineer](https://github.com/jamro/tiny-engineer) by Krzysztof Jamroz — keep that attribution and the upstream copyright / licence notices; do not use the Tiny Engineer name, logo, or AI emblem as this product's branding ([TRADEMARK.md](TRADEMARK.md)).
 
 | Path | Role |
 | --- | --- |
@@ -16,21 +16,23 @@ Tiny Engineer is an open-source ESP32-C3 Wi-Fi desk robot: 3D-printed mechanics,
 | `hardware/` | KiCad boards (CERN-OHL-S) |
 | `docs/` | Human docs; depth lives here |
 
-Physical module: **Waveshare ESP32-C3-Zero**. PlatformIO `board = esp32-c3-devkitm-1` is the build target name.
+Physical module: **Seeed Studio XIAO ESP32S3** (default env `xiao-esp32s3`). Legacy: **Waveshare ESP32-C3-Zero**, built with env `esp32-c3-devkitm-1` (PlatformIO board name). Pin map: [`include/pins.h`](include/pins.h) / [docs/hardware/pinout.md](docs/hardware/pinout.md).
 
 ## Commands
 
 From the repo root (Node 18+ for packages). Host only — CI never flashes.
 
 ```bash
-pio run
+pio run -e xiao-esp32s3
+pio run -e esp32-c3-devkitm-1
 pio run -e expression-demo
 pio test -e native
 node scripts/expressions/generate.js --check
 node scripts/expressions/test-assets.js
-npm test --prefix packages/tiny-engineer-cursor
-npm test --prefix packages/tiny-engineer-antigravity
-npm test --prefix packages/tiny-engineer-claude-code
+npm test --prefix packages/vibebot-cursor
+npm test --prefix packages/vibebot-antigravity
+npm test --prefix packages/vibebot-claude-code
+npm test --prefix packages/vibebot-hub
 python3 scripts/check_pcb.py
 ```
 
@@ -71,8 +73,7 @@ Breaking rules, SemVer mapping, and examples: [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Firmware** — `pio run`; also `pio test -e native` when touching settings validation. Pin changes update `include/pins.h` **and** `docs/hardware/` together.
 - **Settings** — layer checklist in [docs/settings.md](docs/settings.md). Never log raw `access_token`.
 - **Integrations** — add/extend package tests; prefer short timeouts and ignore network errors so a missing robot does not stall the agent.
-- **CAD** — edit `.f3d` **and** export affected `3mf`. CERN-OHL-S. Do not swap `AiEmblem.3mf` as branding. New parts: [docs/3d/adding-parts.md](docs/3d/adding-parts.md).
-- **Mods** — optional CAD under `3d_models/mods/<mod_name>/`. Commit `type(mods)` and name the mod in the summary. `feat(mods)` / `fix(mods)` do not version stock CAD. See [3d_models/mods/README.md](3d_models/mods/README.md).
+- **CAD** — edit `.f3d` **and** export affected `3mf`. CERN-OHL-S. `AiEmblem` is upstream Tiny Engineer trademark geometry: do not ship it as Vibe Bot branding; it is pending replacement by a Vibe Bot emblem (see the CAD TODO in [3d_models/README.md](3d_models/README.md)). New parts: [docs/3d/adding-parts.md](docs/3d/adding-parts.md).
 - **Mods** — optional CAD under `3d_models/mods/<mod_name>/`. Commit `type(mods)` and name the mod in the summary. `feat(mods)` / `fix(mods)` do not version stock CAD. See [3d_models/mods/README.md](3d_models/mods/README.md).
 - **PCB** — [docs/pcb.md](docs/pcb.md) checklist + KiCad review rules below. Run `python3 scripts/check_pcb.py` (KiCad 10). New board paths need `REUSE.toml`. CERN-OHL-S.
 - **Motion** — poses −1..1 mapped to saved min/max; see [docs/robot-movement.md](docs/robot-movement.md). Do not widen NVS servo clamps without testing on a real robot.
@@ -96,9 +97,9 @@ Contribute/review process: [docs/pcb.md](docs/pcb.md). `expected-nets.yml`: [doc
 
 ## Bench safety
 
-- Supply **5 V / ≥ 2 A**. Never power servos from the ESP32 3.3 V LDO.
+- Supply **5 V / 3 A** into the robot's own USB-C power input (XIAO build; legacy C3 build: ≥ 2 A). Never power servos from the ESP32 3.3 V LDO or from the XIAO's USB-C port.
 - PCA9685 **VCC** = 3.3 V logic; **V+** = 5 V servo rail. Do not short them.
-- Leave the C3-Zero ceramic antenna clear of metal and dense plastic.
+- Keep the XIAO ESP32S3 antenna (or the legacy C3-Zero ceramic antenna) clear of metal and dense plastic.
 
 ## Read next
 

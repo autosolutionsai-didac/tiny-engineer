@@ -9,7 +9,7 @@ static const char INDEX_HTML[] = R"html(<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tiny Engineer</title>
+<title>Vibe Bot</title>
 <style>
 :root{--bg:#faf9f7;--text:#1a1a1a;--muted:#666;--accent:#e85d04;--accent-hover:#d45304;--card:#fff;--border:#e0ddd8;--success:#2d6a4f;--error:#c1121f;--loading:#555}
 *{box-sizing:border-box}
@@ -205,7 +205,7 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 
 <section id="view-home" class="view">
 <div class="hero">
-<h1>Tiny Engineer</h1>
+<h1>Vibe Bot</h1>
 <p>A desk robot that acts out your AI coding assistant while it works.</p>
 </div>
 <div id="health-info" class="info-strip">Loading status&hellip;</div>
@@ -215,7 +215,7 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 <a class="card" href="/tests"><h3>Hardware tests</h3><p>Try the speaker, screen, LEDs, and servo sweep.</p></a>
 <a class="card" href="/config"><h3>Config</h3><p>Device name, timeouts, volume, eyes style, boot behavior, serial logging, and API token. WiFi is set in setup mode after factory reset; servo ranges, screen orientation, and RGB mapping can be retuned there too.</p></a>
 <a class="card" href="/api"><h3>API reference</h3><p>Full endpoint list, parameters, and curl-friendly docs.</p></a>
-<a class="card card-github" href="https://github.com/jamro/tiny-engineer" target="_blank" rel="noopener"><h3>GitHub docs &rarr;</h3><p>Build guide, wiring, and full project docs.</p></a>
+<a class="card card-github" href="https://github.com/autosolutionsai-didac/tiny-engineer" target="_blank" rel="noopener"><h3>GitHub docs &rarr;</h3><p>Build guide, wiring, and full project docs.</p></a>
 </div>
 </section>
 
@@ -237,6 +237,9 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 <tr><td>POST</td><td><code>/settings/reset</code></td><td>Factory reset all settings to defaults</td></tr>
 <tr><td>GET</td><td><code>/anim</code></td><td>Current animation name</td></tr>
 <tr><td>POST</td><td><code>/anim</code></td><td>Set animation (see parameters below)</td></tr>
+<tr><td>POST</td><td><code>/session</code></td><td>Create/update/end an agent session (see parameters below)</td></tr>
+<tr><td>GET</td><td><code>/sessions</code></td><td>Session table JSON</td></tr>
+<tr><td>POST</td><td><code>/sessions/clear</code></td><td>Remove all REST-sourced sessions</td></tr>
 <tr><td>POST</td><td><code>/test/audio</code></td><td>Play tone test</td></tr>
 <tr><td>POST</td><td><code>/test/audio/bell</code></td><td>Play bell WAV from LittleFS</td></tr>
 <tr><td>POST</td><td><code>/test/screen</code></td><td>OLED demo</td></tr>
@@ -266,6 +269,7 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 <tr><td><code>servo_maxs</code></td><td>string</td><td>5 comma-separated ints 0&ndash;180; setup AP only; each max &gt; min</td></tr>
 <tr><td><code>rgb_order</code></td><td>string</td><td><code>RGB</code>, <code>RBG</code>, <code>GRB</code>, <code>GBR</code>, <code>BRG</code>, or <code>BGR</code>; setup AP only; default <code>GRB</code></td></tr>
 <tr><td><code>oled_rotate_180</code></td><td>integer</td><td><code>0</code> or <code>1</code>; setup AP only; default <code>0</code></td></tr>
+<tr><td><code>agentdeck</code></td><td>string</td><td><code>on</code> or <code>off</code> (also <code>1</code> / <code>0</code>); AgentDeck daemon client; default <code>on</code></td></tr>
 </table>
 <p>WiFi credentials, servo min/max, RGB LED mapping, and OLED rotation can only be set in setup AP mode. During setup, <code>hostname</code> may be sent with <code>wifi_ssid</code> and <code>wifi_password</code> (same hostname rules as Config). During setup (credentials not saved), control APIs return <strong>503</strong> <code>wifi not configured</code>; <code>POST /setup/servo</code>, <code>POST /setup/led</code>, <code>POST /setup/audio</code>, and <code>POST /setup/oled</code> stay available. Change WiFi later via factory reset. Servo ranges, RGB mapping, and screen rotation survive factory reset and can be retuned in the setup wizard.</p>
 <p>POST <code>/anim</code> &mdash; query param <code>name</code>:</p>
@@ -283,6 +287,15 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 <tr><td><code>dead</code></td><td>Out-of-power: dead.wav, then X X</td></tr>
 <tr><td><code>wakeup</code></td><td>One-shot sleep-inertia wake</td></tr>
 <tr><td><code>sleep</code></td><td>Close eyes and sleep</td></tr>
+</table>
+<p>POST <code>/session</code> &mdash; query params. Any session overrides manual mode; a manual <code>POST /anim</code> pauses arbitration for 15&nbsp;s:</p>
+<table>
+<tr><th>Param</th><th>Type</th><th>Range</th></tr>
+<tr><td><code>id</code></td><td>string</td><td>1&ndash;40 chars <code>[A-Za-z0-9._:-]</code>; required</td></tr>
+<tr><td><code>state</code></td><td>string</td><td><code>idle</code>, <code>working</code>, <code>waiting</code>, <code>error</code>, or <code>ended</code> (removes); required</td></tr>
+<tr><td><code>activity</code></td><td>string</td><td><code>typing</code>, <code>reading</code>, or <code>thinking</code> (with <code>working</code>; default <code>thinking</code>)</td></tr>
+<tr><td><code>agent</code></td><td>string</td><td>0&ndash;16 chars <code>[a-z0-9-]</code> (e.g. <code>claude-code</code>, <code>cursor</code>)</td></tr>
+<tr><td><code>label</code></td><td>string</td><td>0&ndash;24 printable ASCII chars (project name)</td></tr>
 </table>
 <p>POST <code>/test/servo</code> &mdash; query params:</p>
 <table>
@@ -381,7 +394,7 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 <h2 class="page-title" id="config-page-title">Config</h2>
 <p class="page-desc" id="config-page-desc">Saved to flash. Most changes apply right away.</p>
 <div id="setup-wizard">
-<h2 class="page-title">Tiny Engineer setup</h2>
+<h2 class="page-title">Vibe Bot setup</h2>
 <p id="setup-progress-label" class="page-desc">Step 1 of 5 &middot; Servos</p>
 <div class="setup-progress-track"><div id="setup-progress-bar" class="setup-progress-bar"></div></div>
 <div id="setup-step-servos">
@@ -598,6 +611,17 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 </div>
 </div>
 <div class="config-section">
+<h3>Agent sessions</h3>
+<div class="form-group">
+<div class="field-head"><span>AgentDeck</span><span class="apply-badge apply-now">Immediate</span></div>
+<div class="toggle-row">
+<input type="checkbox" id="config-agentdeck" checked>
+<label for="config-agentdeck">Follow sessions from an AgentDeck daemon on the LAN (mDNS)</label>
+</div>
+<p class="hint">REST pushers (vibebot-hub) use <code>POST /session</code> either way.</p>
+</div>
+</div>
+<div class="config-section">
 <h3>Security</h3>
 <div class="form-group">
 <label for="config-access-token">Access token</label>
@@ -618,7 +642,7 @@ body:not(.setup-mode) #setup-wizard{display:none!important}
 </section>
 
 <footer>
-<a href="https://github.com/jamro/tiny-engineer" target="_blank" rel="noopener">github.com/jamro/tiny-engineer</a>
+<a href="https://github.com/autosolutionsai-didac/tiny-engineer" target="_blank" rel="noopener">Vibe Bot on GitHub</a> &middot; Based on <a href="https://github.com/jamro/tiny-engineer" target="_blank" rel="noopener">Tiny Engineer</a> by Krzysztof Jamroz
 </footer>
 
 <script>
@@ -1210,6 +1234,7 @@ function loadSettings(){
     setConfigVolume(j.volume!=null?j.volume:70);
     document.getElementById("config-welcome").checked=j.welcome!==false;
     document.getElementById("config-serial-log").checked=!!j.serial_log;
+    document.getElementById("config-agentdeck").checked=j.agentdeck!=="off";
     document.getElementById("config-loading").value=j.loading==="sleep_inertia"?"sleep_inertia":"progress";
     document.getElementById("config-eyes-style").value=(j.eyes_style==="kaomoji"||j.eyes_style==="cover"||j.eyes_style==="dots")?j.eyes_style:"classic";
     setAccessTokenFromServer(!!j.access_token_set);
@@ -1477,11 +1502,12 @@ document.getElementById("config-form").addEventListener("submit",function(e){
   var volume=document.getElementById("config-volume").value;
   var welcome=document.getElementById("config-welcome").checked?1:0;
   var serialLog=document.getElementById("config-serial-log").checked?1:0;
+  var agentdeck=document.getElementById("config-agentdeck").checked?"on":"off";
   var loading=document.getElementById("config-loading").value;
   var eyesStyle=document.getElementById("config-eyes-style").value;
   var newToken=document.getElementById("config-access-token").value;
   var wasClearPending=accessTokenClearPending;
-  var url="/settings?sleep_timeout="+encodeURIComponent(sleep)+"&hostname="+encodeURIComponent(host)+"&volume="+encodeURIComponent(volume)+"&welcome="+welcome+"&serial_log="+serialLog+"&continuous_timeout="+encodeURIComponent(continuous)+"&loading="+encodeURIComponent(loading)+"&eyes_style="+encodeURIComponent(eyesStyle);
+  var url="/settings?sleep_timeout="+encodeURIComponent(sleep)+"&hostname="+encodeURIComponent(host)+"&volume="+encodeURIComponent(volume)+"&welcome="+welcome+"&serial_log="+serialLog+"&continuous_timeout="+encodeURIComponent(continuous)+"&loading="+encodeURIComponent(loading)+"&eyes_style="+encodeURIComponent(eyesStyle)+"&agentdeck="+agentdeck;
   if(wasClearPending)url+="&access_token=";
   else if(!accessTokenMaskActive&&newToken)url+="&access_token="+encodeURIComponent(newToken);
   setBusy(true);
@@ -1496,6 +1522,7 @@ document.getElementById("config-form").addEventListener("submit",function(e){
       setConfigVolume(res.data.volume!=null?res.data.volume:volume);
       document.getElementById("config-welcome").checked=res.data.welcome!==false;
       document.getElementById("config-serial-log").checked=!!res.data.serial_log;
+      document.getElementById("config-agentdeck").checked=res.data.agentdeck!=="off";
       document.getElementById("config-loading").value=res.data.loading==="sleep_inertia"?"sleep_inertia":"progress";
       document.getElementById("config-eyes-style").value=(res.data.eyes_style==="kaomoji"||res.data.eyes_style==="cover"||res.data.eyes_style==="dots")?res.data.eyes_style:"classic";
       if(wasClearPending)setStoredToken("");

@@ -7,6 +7,7 @@ Boards live under `boards/<board-name>/`. Prefer the same name for the directory
 | Board | Role |
 | --- | --- |
 | [`main-control-board`](boards/main-control-board/) | Draft interconnect / carrier (header sockets for existing modules) |
+| [`xiao-main-board`](boards/xiao-main-board/) | Draft carrier for the Seeed XIAO ESP32S3 build (70 × 45 mm): sockets for XIAO, PCA9685, MAX98357A, OLED, 5993 power input; buffered WS2812 output |
 
 Contribution rules, KiCad version, what to commit, ERC/DRC, and PR expectations: [docs/pcb.md](../docs/pcb.md). Pre-PR checklist: [docs/pcb.md#checklist](../docs/pcb.md#checklist). Critical net checklist: [docs/pcb.md#expected-nets-yml](../docs/pcb.md#expected-nets-yml). Local/CI checks: `python3 scripts/check_pcb.py` (KiCad 10) — [docs/testing.md](../docs/testing.md).
 

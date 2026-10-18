@@ -20,6 +20,7 @@ extern uint8_t g_servoMin[SETTINGS_SERVO_COUNT];
 extern uint8_t g_servoMax[SETTINGS_SERVO_COUNT];
 extern char g_rgbOrder[SETTINGS_RGB_ORDER_MAX_LEN + 1];
 extern bool g_oledRotate180;
+extern bool g_agentdeck;
 
 void setHostnameCache(char* dest, const char* src);
 void setLoadingCache(char* dest, const char* src);

@@ -1,8 +1,8 @@
 # Optional: sleep / wake on Mac screen lock
 
-Not required to use Tiny Engineer. Extra macOS companion: lock the screen → robot `sleep`, unlock → `wakeup`. Primary integrations stay REST and Cursor ([`integration.md`](integration.md), [`api.md`](api.md)).
+Not required to use Vibe Bot. Extra macOS companion: lock the screen → robot `sleep`, unlock → `wakeup`. Primary integrations stay REST and Cursor ([`integration.md`](integration.md), [`api.md`](api.md)).
 
-Robot must already be on the same Wi-Fi. Base URL: `http://tiny-engineer.local`.
+Robot must already be on the same Wi-Fi. Base URL: `http://vibebot.local`.
 
 ## Overview
 
@@ -10,8 +10,8 @@ A small Swift CLI listens for macOS screen lock / unlock and POSTs `/anim`:
 
 | Event | Request |
 | --- | --- |
-| Screen locked | `curl -X POST "http://tiny-engineer.local/anim?name=sleep"` |
-| Screen unlocked | `curl -X POST "http://tiny-engineer.local/anim?name=wakeup"` |
+| Screen locked | `curl -X POST "http://vibebot.local/anim?name=sleep"` |
+| Screen unlocked | `curl -X POST "http://vibebot.local/anim?name=wakeup"` |
 
 Verified responses look like:
 
@@ -63,7 +63,7 @@ func postAnim(name: String) {
     process.executableURL = URL(fileURLWithPath: "/usr/bin/curl")
     process.arguments = [
         "-X", "POST",
-        "http://tiny-engineer.local/anim?name=\(name)",
+        "http://vibebot.local/anim?name=\(name)",
     ]
     do {
         try process.run()
@@ -117,8 +117,8 @@ To hide curl’s response body, add `-s` `-o` `/dev/null` to `process.arguments`
 Confirm the robot answers **before** installing a LaunchAgent:
 
 ```bash
-curl -X POST "http://tiny-engineer.local/anim?name=sleep"
-curl -X POST "http://tiny-engineer.local/anim?name=wakeup"
+curl -X POST "http://vibebot.local/anim?name=sleep"
+curl -X POST "http://vibebot.local/anim?name=wakeup"
 ```
 
 Expect JSON like `{"ok":true,"animation":"sleep"}` / `{"ok":true,"animation":"wakeup"}`. If the hostname stalls, try `curl -4` or the IP on the OLED ([`api.md`](api.md)).
@@ -199,7 +199,7 @@ After login (or immediately, because `RunAtLoad` is true) you should see `screen
 3. Robot plays sleep then wakeup. Independent check:
 
 ```bash
-curl http://tiny-engineer.local/anim
+curl http://vibebot.local/anim
 ```
 
 Successful POSTs return JSON such as `{"ok":true,"animation":"sleep"}` and `{"ok":true,"animation":"wakeup"}`.
@@ -252,8 +252,8 @@ If lock/unlock works but `/tmp/screenwatch.log` stays empty, Swift’s stdout is
 If the helper runs but the robot does not move, bypass Swift:
 
 ```bash
-curl -v -X POST "http://tiny-engineer.local/anim?name=sleep"
-curl -v -X POST "http://tiny-engineer.local/anim?name=wakeup"
+curl -v -X POST "http://vibebot.local/anim?name=sleep"
+curl -v -X POST "http://vibebot.local/anim?name=wakeup"
 ```
 
 A reachable board returns `{"ok":true,"animation":"sleep"}` / `{"ok":true,"animation":"wakeup"}`. Failures here are network, mDNS, or API auth — not launchd. If `access_token` is set, curl needs `Authorization: Bearer …` ([`api.md`](api.md)).
@@ -269,7 +269,7 @@ Optional: `rm -r ~/screenwatch` and the log files under `/tmp/`. After `bootout`
 
 ## Notes and limitations
 
-- Optional extra. Tiny Engineer does not need this to work with Cursor, REST, or the web UI.
+- Optional extra. Vibe Bot does not need this to work with Cursor, REST, or the web UI.
 - `com.apple.screenIsLocked` / `com.apple.screenIsUnlocked` are widely used but unofficial. They may change in a future macOS.
 - Lock via Control-Command-Q (or Lock Screen) is the event this watches. Closing the lid may sleep the Mac before the helper can POST.
 - To discard curl bodies: add `-s` `-o` `/dev/null` to the `Process` arguments.

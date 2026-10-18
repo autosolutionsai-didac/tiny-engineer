@@ -1,8 +1,8 @@
-# Contributing to Tiny Engineer
+# Contributing to Vibe Bot
 
 Issues and PRs welcome — especially new agent integrations. Search existing issues first. One concern per PR. Open an issue before a large CAD or HTTP API change.
 
-This is a desk robot: firmware on an ESP32-C3, 3D-printed mechanics, and HTTP clients that drive poses. Contribution rules follow that split.
+This is a desk robot: firmware on a Seeed XIAO ESP32S3 (legacy ESP32-C3-Zero), 3D-printed mechanics, and HTTP clients that drive poses. Contribution rules follow that split. Vibe Bot is a fork of [Tiny Engineer](https://github.com/jamro/tiny-engineer) by Krzysztof Jamroz.
 
 ## Ways to help
 
@@ -25,7 +25,7 @@ Opening a PR licenses your change under the license of the files you touch. No C
 
 If you modify the hardware designs and distribute Products based on them, CERN-OHL-S-2.0 requires you to make the Complete Source available under the same license. Keep [3d_models/NOTICE](3d_models/NOTICE) and [hardware/NOTICE](hardware/NOTICE) Source Location accurate for the revision you ship.
 
-The **Tiny Engineer** name, logo, and [`3d_models/parts/sg90/3mf/AiEmblem.3mf`](3d_models/parts/sg90/3mf/AiEmblem.3mf) are **not** licensed. Factual “based on Tiny Engineer” is fine. Do not imply an official product. Details: [TRADEMARK.md](TRADEMARK.md).
+The upstream **Tiny Engineer** name, logo, and [`3d_models/parts/sg90/3mf/AiEmblem.3mf`](3d_models/parts/sg90/3mf/AiEmblem.3mf) are **not** licensed. Do not use them as Vibe Bot branding. Factual attribution (“Based on the Tiny Engineer open hardware design by Krzysztof Jamroz”) is required and must stay, together with the upstream copyright and licence notices. Do not imply an official Tiny Engineer product. Details: [TRADEMARK.md](TRADEMARK.md).
 
 New hardware paths need a matching `[[annotations]]` block in [REUSE.toml](REUSE.toml).
 
@@ -36,18 +36,20 @@ Coding agents: read [AGENTS.md](AGENTS.md) first (tool-agnostic project brief).
 PlatformIO from the repo root. Node 18+ for packages. GitHub Actions on `main` and PRs runs the same commands ([.github/workflows/ci.yml](.github/workflows/ci.yml)). Host only — CI never flashes.
 
 ```bash
-pio run
+pio run -e xiao-esp32s3
+pio run -e esp32-c3-devkitm-1
 pio run -e expression-demo
 pio test -e native
 node scripts/expressions/generate.js --check
 node scripts/expressions/test-assets.js
-npm test --prefix packages/tiny-engineer-cursor
-npm test --prefix packages/tiny-engineer-antigravity
-npm test --prefix packages/tiny-engineer-claude-code
+npm test --prefix packages/vibebot-cursor
+npm test --prefix packages/vibebot-antigravity
+npm test --prefix packages/vibebot-claude-code
+npm test --prefix packages/vibebot-hub
 python3 scripts/check_pcb.py
 ```
 
-`pio test -e native` is not `pio run -e native`. PCB checks need KiCad 10 (`python3 scripts/check_pcb.py`). Details: [docs/testing.md](docs/testing.md). Flash locally with `pio run -t upload` when you have a board. Physical module is a **Waveshare ESP32-C3-Zero**; PlatformIO `board = esp32-c3-devkitm-1` is the build target name.
+`pio test -e native` is not `pio run -e native`. PCB checks need KiCad 10 (`python3 scripts/check_pcb.py`). Details: [docs/testing.md](docs/testing.md). Flash locally with `pio run -t upload` when you have a board. Physical module is a **Seeed Studio XIAO ESP32S3** (env `xiao-esp32s3`); the legacy **Waveshare ESP32-C3-Zero** builds with env `esp32-c3-devkitm-1` (PlatformIO board name).
 
 ## By change type
 
@@ -59,7 +61,7 @@ python3 scripts/check_pcb.py
 
 **Integrations.** Add or extend tests in the package you change. Raw REST examples belong in [docs/integration.md](docs/integration.md). Prefer short timeouts and ignore network errors so a missing robot does not stall the agent.
 
-**CAD.** Edit [`3d_models/cad/TinyEngineer.f3d`](3d_models/cad/TinyEngineer.f3d) **and** export the affected [`3d_models/parts/{servo_id}/3mf/*.3mf`](3d_models/parts/). Keep CERN-OHL-S. Do not swap `AiEmblem.3mf` as a branding change. New parts: [docs/3d/adding-parts.md](docs/3d/adding-parts.md). Servo presets / add-in: [docs/3d/parametric-design.md](docs/3d/parametric-design.md).
+**CAD.** Edit [`3d_models/cad/TinyEngineer.f3d`](3d_models/cad/TinyEngineer.f3d) **and** export the affected [`3d_models/parts/{servo_id}/3mf/*.3mf`](3d_models/parts/). Keep CERN-OHL-S. `AiEmblem` is upstream trademark geometry and is pending replacement by a Vibe Bot emblem in Fusion ([CAD TODO](3d_models/README.md#cad-todo-vibe-bot)). New parts: [docs/3d/adding-parts.md](docs/3d/adding-parts.md). Servo presets / add-in: [docs/3d/parametric-design.md](docs/3d/parametric-design.md).
 
 **Mods.** Optional CAD under [`3d_models/mods/<mod_name>/`](3d_models/mods/README.md). Commit as `type(mods)` and name the mod in the summary. Do not add a scope per mod. `feat(mods)` / `fix(mods)` do not version the stock CAD revision.
 
@@ -69,10 +71,10 @@ python3 scripts/check_pcb.py
 
 ## Bench safety
 
-- Supply **5 V / ≥ 2 A**. Five PowerHD HD-1370A stalls are ~1.3–1.6 A before Wi-Fi and audio; SG90 (recommended) typically stalls harder ([docs/hardware/power.md](docs/hardware/power.md)).
-- Never power servos from the ESP32 3.3 V LDO.
+- Supply **5 V / 3 A** into the dedicated USB-C power input (XIAO build; legacy C3 build: ≥ 2 A). Five PowerHD HD-1370A stalls are ~1.3–1.6 A before Wi-Fi and audio; SG90 (recommended) typically stalls harder ([docs/hardware/power.md](docs/hardware/power.md)).
+- Never power servos from the ESP32 3.3 V LDO or from the XIAO's own USB-C port.
 - PCA9685 **VCC** = 3.3 V logic; **V+** = 5 V servo rail. Do not short them.
-- Leave the C3-Zero ceramic antenna clear of metal and dense plastic.
+- Keep the XIAO ESP32S3 antenna (or legacy C3-Zero ceramic antenna) clear of metal and dense plastic.
 
 Say in the PR whether you tested on a robot, on the bench, or with no hardware.
 

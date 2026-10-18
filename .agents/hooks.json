@@ -1,8 +1,8 @@
 {
-  "tiny-engineer": {
+  "vibebot": {
     "PreInvocation": [
       {
-        "command": "tiny-engineer-antigravity PreInvocation",
+        "command": "vibebot-antigravity PreInvocation",
         "timeout": 3
       }
     ],
@@ -11,7 +11,7 @@
         "matcher": "*",
         "hooks": [
           {
-            "command": "tiny-engineer-antigravity PreToolUse",
+            "command": "vibebot-antigravity PreToolUse",
             "timeout": 3
           }
         ]
@@ -22,7 +22,7 @@
         "matcher": "*",
         "hooks": [
           {
-            "command": "tiny-engineer-antigravity PostToolUse",
+            "command": "vibebot-antigravity PostToolUse",
             "timeout": 3
           }
         ]
@@ -30,7 +30,7 @@
     ],
     "Stop": [
       {
-        "command": "tiny-engineer-antigravity Stop",
+        "command": "vibebot-antigravity Stop",
         "timeout": 3
       }
     ]

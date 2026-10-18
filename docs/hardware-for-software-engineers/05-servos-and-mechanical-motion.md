@@ -1,6 +1,6 @@
 # Servos and mechanical motion
 
-**Position servos** are everywhere in hobby robotics — small actuators that go to an angle and hold. They're not stepper motors, not DC gearmotors. Understanding them saves you from stripped gears and firmware angles that mean nothing physically. Tiny Engineer has **five** of them; the mechanics chapter applies to any servo-driven joint.
+**Position servos** are everywhere in hobby robotics — small actuators that go to an angle and hold. They're not stepper motors, not DC gearmotors. Understanding them saves you from stripped gears and firmware angles that mean nothing physically. Vibe Bot has **five** of them; the mechanics chapter applies to any servo-driven joint.
 
 ---
 
@@ -88,7 +88,7 @@ Always respect **safe ranges** for the assembled robot — [robot-movement.md](.
 
 ---
 
-## The Tiny Engineer servo stack
+## The Vibe Bot servo stack
 
 End-to-end path from HTTP to motion:
 

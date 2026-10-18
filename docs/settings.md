@@ -2,9 +2,9 @@
 
 Persistent settings live in NVS (namespace `te`) under [`src/settings/`](../src/settings/). They are exposed on `GET`/`POST /settings`, the Config web UI, and must stay in sync with API docs.
 
-**HTTP / JSON** (query params and `GET /settings` fields — see [api.md](api.md)): `sleep_timeout`, `hostname`, `volume`, `welcome`, `serial_log`, `continuous_timeout`, `loading`, `eyes_style`, `access_token`, `wifi_ssid`, `wifi_password`, `servo_mins` / `servo_maxs`, `rgb_order`, `oled_rotate_180`.
+**HTTP / JSON** (query params and `GET /settings` fields — see [api.md](api.md)): `sleep_timeout`, `hostname`, `volume`, `welcome`, `serial_log`, `continuous_timeout`, `loading`, `eyes_style`, `access_token`, `wifi_ssid`, `wifi_password`, `servo_mins` / `servo_maxs`, `rgb_order`, `oled_rotate_180`, `agentdeck`.
 
-**NVS keys** (≤15 chars; defined in [`nvs.h`](../src/settings/nvs.h)): `sleep_m`, `host`, `vol`, `welcome`, `serial_log`, `cont_to`, `loading`, `eyes_sty`, `access_tok`, `wifi_ssid`, `wifi_pass`, `sranges`, `rgb_ord`, `oled_rot`. Add new short keys there — do not reuse HTTP names as NVS keys unless they already fit the length limit.
+**NVS keys** (≤15 chars; defined in [`nvs.h`](../src/settings/nvs.h)): `sleep_m`, `host`, `vol`, `welcome`, `serial_log`, `cont_to`, `loading`, `eyes_sty`, `access_tok`, `wifi_ssid`, `wifi_pass`, `sranges`, `rgb_ord`, `oled_rot`, `agentdeck`. Add new short keys there — do not reuse HTTP names as NVS keys unless they already fit the length limit.
 
 Follow the same pattern for a new setting.
 

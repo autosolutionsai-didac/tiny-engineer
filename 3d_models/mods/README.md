@@ -1,6 +1,6 @@
 # Mods
 
-Optional and community CAD mods for Tiny Engineer. Not stock robot parts — those live in [`cad/`](../cad/) and [`parts/`](../parts/).
+Optional and community CAD mods for Vibe Bot. Not stock robot parts — those live in [`cad/`](../cad/) and [`parts/`](../parts/).
 
 ## Layout
 

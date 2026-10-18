@@ -1,6 +1,6 @@
 # How it all fits together
 
-You've read the pieces. This chapter closes the loop on the guide's goal — **from software-only to hardware-capable** — then hands you to the build checklist. Tiny Engineer is the capstone: one system where electricity, firmware, buses, print, and motion connect. The vocabulary you picked up travels with you to the next board.
+You've read the pieces. This chapter closes the loop on the guide's goal — **from software-only to hardware-capable** — then hands you to the build checklist. Vibe Bot is the capstone: one system where electricity, firmware, buses, print, and motion connect. The vocabulary you picked up travels with you to the next board.
 
 **Expect medium difficulty overall** — not an entry-level blinky kit, but a fair first hardware build for a software engineer who read the guide and validates electronics on the desk (wire + flash) before closing the chest. Hardest areas for most SWEs: wiring density, servo mechanics, power under load. Easiest: REST and Wi-Fi once that smoke check is solid.
 
@@ -92,7 +92,7 @@ flowchart TB
 | --- | --- | --- |
 | Volts, amps, GND, two domains | Ch. 01, 07 | [power.md](../hardware/power.md) |
 | ESP32-C3, GPIO, USB, antenna | Ch. 02 | [pinout.md](../hardware/pinout.md) |
-| Wires, schematic reading | Ch. 03 | [wiring.md](../hardware/wiring.md), [diagram](../wiring/Tiny%20Engineer.drawio.png) |
+| Wires, schematic reading | Ch. 03 | [wiring.md](../hardware/wiring.md), [diagram](../wiring/legacy-c3-zero.drawio.png) |
 | I2C, I2S, PWM | Ch. 04 | [interfaces.md](../hardware/interfaces.md) |
 | Servos, horns, joints | Ch. 05 | [robot-movement.md](../robot-movement.md), [servos.md](../hardware/servos.md) |
 | Print, PLA/PETG, Fusion | Ch. 06 | [3d_models/README.md](../../3d_models/README.md) |
@@ -132,7 +132,7 @@ Check these off — order matches the checklist:
 | 4 | **One servo / 90°** | flash | Setup AP **Move all to 90°** or `/test/servo` moves a channel |
 | 5 | **Joints in safe range** | assembly §§1–19 | Each joint centered and joined; no stall buzz |
 | 6 | **Harness seated** | late assembly | Same electronics checks still pass after mounting in the chest |
-| 7 | **Wi-Fi stable** | after §20 wizard | `/health` over `tiny-engineer.local` or OLED IP |
+| 7 | **Wi-Fi stable** | after §20 wizard | `/health` over `vibebot.local` or OLED IP |
 | 8 | **Audio + full anim** | prove it | e.g. `ring` — motion + sound (if silent → `uploadfs`) |
 | 9 | **Agent** | optional | Cursor hook or script triggers `/anim` |
 
@@ -142,7 +142,7 @@ Stuck on a milestone? Back one step, read [Ch. 08](08-tools-debugging-and-embedd
 
 ## What I'd tell any software engineer starting hardware
 
-Not specific to day one on Tiny Engineer — things that stayed true across projects:
+Not specific to day one on Vibe Bot — things that stayed true across projects:
 
 1. **Two voltages, one GND** — not optional mental model
 2. **PCA9685 isn't optional** — plan I2C before servos
@@ -163,7 +163,7 @@ You're done with concepts when the milestones make sense and you know which doc 
 
 **Shop → print → wire → flash → assemble → wizard → prove → hooks.**
 
-If you're mostly a software person: good. The bar isn't an EE degree — it's curiosity and willingness to probe a wire. In a world where AI spits out code in seconds, there's a particular joy in something on your desk that moves because *you* closed the loop from schematic to screw. Tiny Engineer is a fun capstone — but the bridge you built here works for the next project too.
+If you're mostly a software person: good. The bar isn't an EE degree — it's curiosity and willingness to probe a wire. In a world where AI spits out code in seconds, there's a particular joy in something on your desk that moves because *you* closed the loop from schematic to screw. Vibe Bot is a fun capstone — but the bridge you built here works for the next project too.
 
 ---
 

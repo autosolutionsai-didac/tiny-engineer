@@ -1,22 +1,22 @@
 {
-  "name": "tiny-engineer-cursor",
+  "name": "vibebot-cursor",
   "version": "0.1.0",
-  "description": "Cursor hooks CLI that drives Tiny Engineer robot animations over HTTP. Root package wraps packages/tiny-engineer-cursor for HTTPS-tarball / local npx (see docs/hooks.md; avoid npx github:… in hooks).",
+  "description": "Cursor hooks CLI that drives Vibe Bot robot animations over HTTP. Root package wraps packages/vibebot-cursor for HTTPS-tarball / local npx (see docs/hooks.md; avoid npx github:… in hooks). Based on Tiny Engineer by Krzysztof Jamroz.",
   "type": "module",
   "bin": {
-    "tiny-engineer-cursor": "./packages/tiny-engineer-cursor/bin/tiny-engineer-cursor.js"
+    "vibebot-cursor": "./packages/vibebot-cursor/bin/vibebot-cursor.js"
   },
   "files": [
-    "packages/tiny-engineer-cursor/bin",
-    "packages/tiny-engineer-cursor/src",
-    "packages/tiny-engineer-cursor/package.json"
+    "packages/vibebot-cursor/bin",
+    "packages/vibebot-cursor/src",
+    "packages/vibebot-cursor/package.json"
   ],
   "engines": {
     "node": ">=18"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jamro/tiny-engineer.git"
+    "url": "git+https://github.com/autosolutionsai-didac/tiny-engineer.git"
   },
   "license": "MIT"
 }

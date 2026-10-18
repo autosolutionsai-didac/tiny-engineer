@@ -6,8 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        Physical board is a **Waveshare ESP32-C3-Zero**. PlatformIO `board = esp32-c3-devkitm-1` is the build target name, not a different module.
-        Vulnerabilities: [SECURITY.md](https://github.com/jamro/tiny-engineer/blob/main/SECURITY.md) — do not file those here.
+        Default board is a **Seeed Studio XIAO ESP32S3** (env `xiao-esp32s3`). Legacy builds use a **Waveshare ESP32-C3-Zero** (env `esp32-c3-devkitm-1`, the PlatformIO board name).
+        Vulnerabilities: [SECURITY.md](https://github.com/autosolutionsai-didac/tiny-engineer/blob/main/SECURITY.md) — do not file those here.
   - type: input
     id: pio
     attributes:
@@ -42,7 +42,7 @@ body:
     id: reach
     attributes:
       label: How you reach the robot
-      description: OLED IP, `http://tiny-engineer.local/`, or setup AP `TinyEngineer-XXXX` at `http://192.168.4.1/`.
+      description: OLED IP, `http://vibebot.local/`, or setup AP `VibeBot-XXXX` at `http://192.168.4.1/`.
     validations:
       required: true
   - type: textarea
@@ -51,15 +51,15 @@ body:
       label: Repro
       description: Commands you ran. Prefer `GET /health` and a `POST /anim` curl.
       placeholder: |
-        curl -4 -sS http://tiny-engineer.local/health
-        curl -X POST "http://tiny-engineer.local/anim?name=ring"
+        curl -4 -sS http://vibebot.local/health
+        curl -X POST "http://vibebot.local/anim?name=ring"
     validations:
       required: true
   - type: textarea
     id: serial
     attributes:
       label: Serial (115200)
-      description: Banner should include `TINY ENGINEER`. Paste from boot through the failure. Redact Wi-Fi passwords and `access_token`.
+      description: Banner should include `VIBE BOT`. Paste from boot through the failure. Redact Wi-Fi passwords and `access_token`.
     validations:
       required: false
   - type: textarea

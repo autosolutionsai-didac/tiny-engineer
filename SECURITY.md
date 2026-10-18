@@ -1,10 +1,10 @@
 # Security
 
-Tiny Engineer is a desk robot on your LAN. Firmware serves HTTP on port 80. Auth is optional.
+Vibe Bot is a desk robot on your LAN (a fork of Tiny Engineer by Krzysztof Jamroz). Firmware serves HTTP on port 80. Auth is optional.
 
 ## Report a vulnerability
 
-Use [GitHub Security Advisories](https://github.com/jamro/tiny-engineer/security/advisories/new).
+Use [GitHub Security Advisories](https://github.com/autosolutionsai-didac/tiny-engineer/security/advisories/new).
 
 Do not file a public issue. Do not attach exploit PoCs or live tokens.
 
@@ -17,9 +17,9 @@ Do not file a public issue. Do not attach exploit PoCs or live tokens.
 ## Out of scope (by design)
 
 - Calling `/anim` (or other control routes) on the LAN when no `access_token` is set — default is open on the local network
-- First-boot setup AP `TinyEngineer-XXXX` with no password
+- First-boot setup AP `VibeBot-XXXX` with no password
 - Physical access to the board, USB, or I2C
-- 5 GHz Wi-Fi — the C3-Zero radio is 2.4 GHz only
+- 5 GHz Wi-Fi — the XIAO ESP32S3 (and legacy C3-Zero) radio is 2.4 GHz only
 
 ## Auth behavior (intentional)
 

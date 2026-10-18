@@ -31,8 +31,10 @@ jobs:
             ${{ runner.os }}-pio-
       - name: Install PlatformIO
         run: pip install -U platformio
-      - name: Build firmware
-        run: pio run
+      - name: Build firmware (XIAO ESP32S3)
+        run: pio run -e xiao-esp32s3
+      - name: Build firmware (legacy ESP32-C3-Zero)
+        run: pio run -e esp32-c3-devkitm-1
       - name: Build OLED expression demo
         run: pio run -e expression-demo
       - name: Host Unity tests
@@ -50,11 +52,13 @@ jobs:
           node scripts/expressions/generate.js --check
           node scripts/expressions/test-assets.js
       - name: Cursor package tests
-        run: npm test --prefix packages/tiny-engineer-cursor
+        run: npm test --prefix packages/vibebot-cursor
       - name: Antigravity package tests
-        run: npm test --prefix packages/tiny-engineer-antigravity
+        run: npm test --prefix packages/vibebot-antigravity
       - name: Claude Code package tests
-        run: npm test --prefix packages/tiny-engineer-claude-code
+        run: npm test --prefix packages/vibebot-claude-code
+      - name: Vibe Bot hub package tests
+        run: npm test --prefix packages/vibebot-hub
 
   pcb:
     runs-on: ubuntu-24.04

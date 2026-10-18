@@ -20,6 +20,7 @@ uint8_t g_servoMin[SETTINGS_SERVO_COUNT] = {};
 uint8_t g_servoMax[SETTINGS_SERVO_COUNT] = {};
 char g_rgbOrder[SETTINGS_RGB_ORDER_MAX_LEN + 1] = {};
 bool g_oledRotate180 = SETTINGS_DEFAULT_OLED_ROTATE_180;
+bool g_agentdeck = SETTINGS_DEFAULT_AGENTDECK;
 
 void setHostnameCache(char* dest, const char* src) {
   strncpy(dest, src, SETTINGS_HOSTNAME_MAX_LEN);
@@ -98,5 +99,7 @@ void logSettingsSnapshot(const char* prefix) {
   serialLogPrint(g_rgbOrder);
   serialLogPrint(" oled_rotate_180=");
   serialLogPrint(g_oledRotate180 ? "on" : "off");
+  serialLogPrint(" agentdeck=");
+  serialLogPrint(g_agentdeck ? "on" : "off");
   serialLogPrintln();
 }

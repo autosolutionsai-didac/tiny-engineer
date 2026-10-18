@@ -1,9 +1,9 @@
 #include <Arduino.h>
-#include "esp32-hal-rgb-led.h"
 
 #include "animation.h"
 #include "network/wifi_connect.h"
 #include "pins.h"
+#include "hardware/led_chain.h"
 #include "hardware/rgb.h"
 #include "serial_log.h"
 #include "settings/settings.h"
@@ -61,44 +61,10 @@ bool sameColor(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8
   return r1 == r2 && g1 == g2 && b1 == b2;
 }
 
-rgb_led_color_order_t ledColorOrderFromName(const char* order) {
-  if (order == nullptr) {
-    return LED_COLOR_ORDER_GRB;
-  }
-
-  if (strcmp(order, "RGB") == 0) {
-    return LED_COLOR_ORDER_RGB;
-  }
-
-  if (strcmp(order, "RBG") == 0) {
-    return LED_COLOR_ORDER_RBG;
-  }
-
-  if (strcmp(order, "GRB") == 0) {
-    return LED_COLOR_ORDER_GRB;
-  }
-
-  if (strcmp(order, "GBR") == 0) {
-    return LED_COLOR_ORDER_GBR;
-  }
-
-  if (strcmp(order, "BRG") == 0) {
-    return LED_COLOR_ORDER_BRG;
-  }
-
-  if (strcmp(order, "BGR") == 0) {
-    return LED_COLOR_ORDER_BGR;
-  }
-
-  return LED_COLOR_ORDER_GRB;
-}
-
-rgb_led_color_order_t ledColorOrderFromSettings() {
-  return ledColorOrderFromName(settingsRgbOrder());
-}
-
-void writeRgb(uint8_t r, uint8_t g, uint8_t b) {
-  rgbLedWriteOrdered(RGB_LED_PIN, ledColorOrderFromSettings(), r, g, b);
+// Lamp = chain index 0 (onboard LED on the legacy C3 target).
+void writeRgb(uint8_t r, uint8_t g, uint8_t b, bool force = false) {
+  ledChainSetLogical(0, r, g, b, settingsRgbOrder());
+  ledChainShow(force);
   g_currentR = r;
   g_currentG = g;
   g_currentB = b;
@@ -214,7 +180,7 @@ void applyTransition(uint32_t nowMs) {
 }  // namespace
 
 void setRgb(uint8_t r, uint8_t g, uint8_t b) {
-  writeRgb(r, g, b);
+  writeRgb(r, g, b, true);
   g_startR = r;
   g_startG = g;
   g_startB = b;
@@ -232,7 +198,8 @@ void rgbSetupHoldWireByte(uint8_t byteIndex) {
   const uint8_t r = byteIndex == 0 ? 255 : 0;
   const uint8_t g = byteIndex == 1 ? 255 : 0;
   const uint8_t b = byteIndex == 2 ? 255 : 0;
-  rgbLedWriteOrdered(RGB_LED_PIN, LED_COLOR_ORDER_RGB, r, g, b);
+  ledChainSetWire(0, r, g, b);
+  ledChainShow(true);
 }
 
 void rgbSetupHoldLogical(uint8_t r, uint8_t g, uint8_t b, const char* order) {
@@ -244,7 +211,8 @@ void rgbSetupHoldLogical(uint8_t r, uint8_t g, uint8_t b, const char* order) {
     use = order;
   }
 
-  rgbLedWriteOrdered(RGB_LED_PIN, ledColorOrderFromName(use), r, g, b);
+  ledChainSetLogical(0, r, g, b, use);
+  ledChainShow(true);
 }
 
 void rgbSetupRelease() {
@@ -347,19 +315,27 @@ void haltWithRgbCode(uint8_t blinks) {
 void runRgbTest() {
   serialLogPrintln("RGB test");
 
-  setRgb(64, 0, 0);
+  // Lamp + every session-bar LED (bar exists only on the XIAO ESP32S3 chain).
+  auto all = [](uint8_t r, uint8_t g, uint8_t b) {
+    for (int i = 1; i < ledChainLength(); i++) {
+      ledChainSetLogical(i, r, g, b, settingsRgbOrder());
+    }
+    setRgb(r, g, b);
+  };
+
+  all(64, 0, 0);
   delay(300);
 
-  setRgb(0, 64, 0);
+  all(0, 64, 0);
   delay(300);
 
-  setRgb(0, 0, 64);
+  all(0, 0, 64);
   delay(300);
 
-  setRgb(32, 32, 32);
+  all(32, 32, 32);
   delay(300);
 
-  setRgb(0, 0, 0);
+  all(0, 0, 0);
 
   serialLogPrintln("RGB OK");
 }

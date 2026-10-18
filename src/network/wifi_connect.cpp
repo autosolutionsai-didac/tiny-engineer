@@ -63,7 +63,7 @@ void buildApSsid() {
   snprintf(
     apSsid,
     sizeof(apSsid),
-    "TinyEngineer-%04X",
+    "VibeBot-%04X",
     suffix
   );
 }

@@ -50,7 +50,7 @@ After each centering step, **unplug the servo from the PCA9685** before you keep
 Use this recipe whenever a later step says to center a servo:
 
 1. Plug the servo into any PCA9685 channel (channel mapping does not matter for centering).
-2. Power the ESP32. Join the setup Wi‑Fi (`TinyEngineer-XXXX`), open `http://192.168.4.1/config`, and press **Move all to 90°**. The shaft is now at electrical center.
+2. Power the ESP32. Join the setup Wi‑Fi (`VibeBot-XXXX`), open `http://192.168.4.1/config`, and press **Move all to 90°**. The shaft is now at electrical center.
 3. After you finish that joint, **unplug** the servo from the PCA9685 before the next awkward join.
 
 ## 3. Neck — center a servo and attach `Neck`
@@ -168,6 +168,8 @@ Mount in that order — USB first, then PCA9685, then MAX98357A, then the speake
 
 ## 13. ESP32, power/AP smoke test, and `LampBase`
 
+> **Vibe Bot / XIAO ESP32S3:** the printed desk top still has the upstream ESP32-C3-Zero opening; the XIAO slot and the LED-bar mount are pending CAD work — see the [CAD TODO](../../3d_models/README.md#cad-todo-vibe-bot). The steps below describe the legacy C3-Zero fit.
+
 1. Seat the **ESP32-C3-Zero** in the opening in the desk top from above. The pins must pass through the holes in the top; the module should sit flush in the recess and not stick up above the desk surface.
 2. From underneath, connect the gold-pin jumper cables to the ESP32.
 3. **Power/AP smoke test** (optional but recommended) before locking the module in:
@@ -256,7 +258,7 @@ No screws — everything is a friction fit.
 
 The robot is built. What remains is servo calibration, Wi-Fi, and a quick check that everything works.
 
-1. Connect power. The board should start the **setup access point** (`TinyEngineer-XXXX`). First boot, or after factory reset + power-cycle.
+1. Connect power. The board should start the **setup access point** (`VibeBot-XXXX`). First boot, or after factory reset + power-cycle.
 2. Join that Wi-Fi and open the configurator (`http://192.168.4.1/config`).
 3. Walk through the **entire setup wizard**:
    1. Seat printed parts on the servo shafts at 90°, then mark each joint’s safe min/max (factory reset keeps prior ranges; you can still change them here).

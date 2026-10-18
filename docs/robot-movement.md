@@ -19,7 +19,7 @@ Animations author poses in **−1..1** relative to each joint’s saved min/max 
 Command a single joint for bench checks:
 
 ```bash
-curl -X POST "http://tiny-engineer.local/test/servo?index=0&angle=90"
+curl -X POST "http://vibebot.local/test/servo?index=0&angle=90"
 ```
 
 Use angles inside the saved safe range on the assembled robot. During setup AP, `POST /setup/servo` can command the full 0–180° electrical range so you can find those limits.

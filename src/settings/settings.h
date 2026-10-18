@@ -4,7 +4,7 @@
 #include <cstdint>
 
 constexpr uint32_t SETTINGS_DEFAULT_SLEEP_TIMEOUT_MIN = 10;
-constexpr const char* SETTINGS_DEFAULT_HOSTNAME = "tiny-engineer";
+constexpr const char* SETTINGS_DEFAULT_HOSTNAME = "vibebot";
 constexpr uint8_t SETTINGS_DEFAULT_VOLUME = 70;
 constexpr bool SETTINGS_DEFAULT_WELCOME = true;
 constexpr bool SETTINGS_DEFAULT_SERIAL_LOG = false;
@@ -30,6 +30,8 @@ constexpr uint8_t SETTINGS_SERVO_ANGLE_MAX = 180;
 constexpr size_t SETTINGS_RGB_ORDER_MAX_LEN = 3;
 constexpr const char* SETTINGS_DEFAULT_RGB_ORDER = "GRB";
 constexpr bool SETTINGS_DEFAULT_OLED_ROTATE_180 = false;
+// AgentDeck daemon client (mDNS + WebSocket). HTTP values: on | off.
+constexpr bool SETTINGS_DEFAULT_AGENTDECK = true;
 
 void initSettings();
 
@@ -52,6 +54,7 @@ float settingsServoMin(int index);
 float settingsServoMax(int index);
 const char* settingsRgbOrder();
 bool settingsOledRotate180();
+bool settingsAgentDeckEnabled();
 
 // Hostname used at boot for Wi-Fi/mDNS (frozen after initSettings).
 const char* settingsBootHostname();
@@ -70,6 +73,8 @@ bool settingsValidateServoRanges(
   const uint8_t* servoMaxs
 );
 bool settingsValidateRgbOrder(const char* rgbOrder);
+// `on` / `off` (also `1` / `0`). Parse sets *enabled when non-null.
+bool settingsParseAgentDeck(const char* value, bool* enabled);
 
 // Updates RAM cache and NVS for any non-null args. Returns false on validation
 // failure (no write). If hostname is set and differs from boot hostname,
@@ -90,6 +95,7 @@ bool saveSettings(
   const uint8_t* servoMaxs,
   const char* rgbOrder,
   const bool* oledRotate180,
+  const bool* agentdeck,
   bool* rebootRequired
 );
 

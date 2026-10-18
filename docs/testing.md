@@ -10,11 +10,11 @@ Unity on the host. Compiles `src/settings/validate.cpp` plus header-only helpers
 pio test -e native
 ```
 
-`pio run` builds firmware. Native tests are **`pio test -e native`**, not `pio run -e native`.
+Firmware builds: `pio run -e xiao-esp32s3` (default Seeed XIAO ESP32S3) and `pio run -e esp32-c3-devkitm-1` (legacy ESP32-C3-Zero); plain `pio run` builds the default `xiao-esp32s3`. Native tests are **`pio test -e native`**, not `pio run -e native`.
 
 ## OLED expressions
 
-The optional [expression library](../lib/TinyEngineerExpressions/README.md) has deterministic asset checks and native renderer tests. These checks require Node 18+ and PlatformIO; they do not access hardware. On the robot, enable those faces with Config / `eyes_style=kaomoji` (default remains `classic`).
+The optional [expression library](../lib/VibeBotExpressions/README.md) has deterministic asset checks and native renderer tests. These checks require Node 18+ and PlatformIO; they do not access hardware. On the robot, enable those faces with Config / `eyes_style=kaomoji` (default remains `classic`).
 
 ```bash
 node scripts/expressions/generate.js --check
@@ -23,16 +23,17 @@ pio test -e native
 pio run -e expression-demo
 ```
 
-The `expression-demo` environment builds a separate OLED-only application without changing the default robot build. For a later bench test, follow its [wiring and upload notes](../lib/TinyEngineerExpressions/README.md#standalone-oled-demo), leave the separate servo supply off, and observe all 16 faces through a complete 48-second cycle. Report physical display results separately from host tests and compilation.
+The `expression-demo` environment builds a separate OLED-only application without changing the default robot build. For a later bench test, follow its [wiring and upload notes](../lib/VibeBotExpressions/README.md#standalone-oled-demo), leave the separate servo supply off, and observe all 16 faces through a complete 48-second cycle. Report physical display results separately from host tests and compilation.
 
 ## Packages
 
 Node 18+. No robot.
 
 ```bash
-npm test --prefix packages/tiny-engineer-cursor
-npm test --prefix packages/tiny-engineer-antigravity
-npm test --prefix packages/tiny-engineer-claude-code
+npm test --prefix packages/vibebot-cursor
+npm test --prefix packages/vibebot-antigravity
+npm test --prefix packages/vibebot-claude-code
+npm test --prefix packages/vibebot-hub
 ```
 
 ## PCB

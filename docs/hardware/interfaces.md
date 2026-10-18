@@ -1,15 +1,15 @@
 # Interfaces
 
-Pin numbers match [`include/pins.h`](../../include/pins.h) and [pinout.md](pinout.md).
+Pin numbers match [`include/pins.h`](../../include/pins.h) and [pinout.md](pinout.md). Default board: **Seeed Studio XIAO ESP32S3** (env `xiao-esp32s3`). Legacy ESP32-C3-Zero pins are listed in the last column where they differ.
 
 ## I2C
 
 Shared bus.
 
-| Signal | ESP32 GPIO | Diagram pad |
-| --- | --- | --- |
-| SDA | GPIO0 | GP0 → PCA9685 SDA, OLED SDA |
-| SCL | GPIO1 | GP1 → PCA9685 SCL, Waveshare OLED **SCL** |
+| Signal | XIAO ESP32S3 | Legacy C3-Zero | Goes to |
+| --- | --- | --- | --- |
+| SDA | D4 / **GPIO5** | GPIO0 | PCA9685 SDA, OLED SDA |
+| SCL | D5 / **GPIO6** | GPIO1 | PCA9685 SCL, Waveshare OLED **SCL** |
 
 | Device | Address | Firmware behaviour if missing |
 | --- | --- | --- |
@@ -24,11 +24,11 @@ PCA9685 **VCC** = **3V3**. OLED **VCC** = **3V3**. Pull-ups: onboard on the Adaf
 
 Device: **MAX98357A** (mono class-D). No MCLK wire.
 
-| Signal | ESP32 GPIO | Amp pin (as drawn) |
-| --- | --- | --- |
-| BCLK | GPIO2 / GP2 | BCLK |
-| WS / LRC | GPIO3 / GP3 | LRC |
-| DATA | GPIO4 / GP4 | DIN |
+| Signal | XIAO ESP32S3 | Legacy C3-Zero | Amp pin |
+| --- | --- | --- | --- |
+| BCLK | D8 / **GPIO7** | GPIO2 | BCLK |
+| WS / LRC | D9 / **GPIO8** | GPIO3 | LRC |
+| DATA | D10 / **GPIO9** | GPIO4 | DIN |
 
 Bring-up configuration in [`src/main.cpp`](../../src/main.cpp):
 
@@ -41,10 +41,19 @@ Bring-up configuration in [`src/main.cpp`](../../src/main.cpp):
 
 Firmware writes identical samples to both stereo slots. MAX98357A is mono; with **GAIN** and **SD** not wired, breakout defaults apply (GAIN floating ≈ 9 dB, SD pulled up ≈ left channel).
 
-Amp **Vin** = USB **5V** (drawing). I2S wires are 3.3 V logic. **SPK+/SPK-** are not on the PNG.
+Amp **Vin** = **+5V** rail. I2S wires are 3.3 V logic.
 
 > [!WARNING]
 > MAX98357A SPK- is not ground.
+
+## WS2812B LED chain
+
+| Signal | XIAO ESP32S3 | Legacy C3-Zero |
+| --- | --- | --- |
+| LED data | D0 / **GPIO1** → **74AHCT1G125** (5 V) → 330 Ω → LED #0 DIN | GPIO10 → onboard WS2812 |
+| Chain length | 9 (`LED_CHAIN_LENGTH`): #0 lamp, #1–#8 session bar | 1 (lamp only) |
+
+Driven with the Arduino-ESP32 3.x RMT HAL in [`src/hardware/led_chain.cpp`](../../src/hardware/led_chain.cpp). Byte order follows the `rgb_order` setting. The level shifter is required on the XIAO build: the LEDs run from 5 V and a 3.3 V data line is below the WS2812B input-high threshold at that supply. Colours and session-bar states: [api.md#rgb-led](../api.md#rgb-led), [sessions.md](../sessions.md).
 
 ## Servo PWM
 
@@ -59,31 +68,38 @@ ESP32 GPIO is not wired to servo SIG lines.
 
 ### PCA9685 output enable
 
-| Signal | ESP32 GPIO | Notes |
-| --- | --- | --- |
-| OE | GPIO5 / GP5 | **Active LOW** — outputs enabled. Firmware drives **HIGH** during PCA9685 init, then **LOW** after neutral PWM is written |
+| Signal | XIAO ESP32S3 | Legacy C3-Zero | Notes |
+| --- | --- | --- | --- |
+| OE | D3 / **GPIO4** (`PCA9685_OE_WIRED = true`) | GPIO5, net pending (`PCA9685_OE_WIRED = false`) | **Active LOW** — firmware drives **HIGH** during PCA9685 init, then **LOW** after neutral PWM is written |
 
-Not wired (`PCA9685_OE_WIRED = false` in [`include/pins.h`](../../include/pins.h)). Firmware keeps OE helpers behind that flag. Blocks invalid PWM during boot and flash resets when the net exists.
+Blocks invalid PWM during boot and flash resets when the net exists.
 
 ## USB
 
-Single USB-C on the robot: **Adafruit 5993**.
+### XIAO ESP32S3 build: two USB-C connectors
 
-| Net | 5993 | ESP32 |
+| Connector | Nets | Role |
+| --- | --- | --- |
+| Robot power input (USB-C power-only breakout) | VBUS → +5V rail, GND | 5 V / 3 A robot supply; no data |
+| XIAO onboard USB-C | native USB (GPIO19/20 internally) | Flash and serial CDC (`ARDUINO_USB_MODE=1`, `ARDUINO_USB_CDC_ON_BOOT=1`, monitor 115200) |
+
+The +5V rail reaches the XIAO **5V** pad through an **SS14** Schottky, so the two VBUS sources are never tied directly — [power.md](power.md). If CDC does not enumerate, hold **BOOT**, tap **RESET**, release BOOT, then flash ([flash.md](../flash.md)).
+
+### Legacy C3-Zero: single USB-C (Adafruit 5993)
+
+| Net | 5993 | ESP32-C3-Zero |
 | --- | --- | --- |
 | VBUS | +5V rail | **5V** pad |
 | GND | common GND | **GND** |
 | D− | data | **GPIO18** |
 | D+ | data | **GPIO19** |
 
-One cable for robot power, flash, and serial CDC (`ARDUINO_USB_MODE=1`, `ARDUINO_USB_CDC_ON_BOOT=1`, monitor 115200). Leave the C3-Zero onboard USB-C unused when 5993 data is wired — [power.md](power.md).
-
-C3-Zero has **no** USB–UART bridge. If CDC does not enumerate, hold **BOOT (GPIO9)** then attach USB (Waveshare flashing note).
+One cable for robot power, flash, and serial CDC. Leave the C3-Zero onboard USB-C unused when 5993 data is wired. C3-Zero has **no** USB–UART bridge; if CDC does not enumerate, hold **BOOT (GPIO9)** then attach USB.
 
 ## Not used
 
 | Interface | Pads | Notes |
 | --- | --- | --- |
-| UART0 | GPIO21 TX / GPIO20 RX | Silkscreen; console is USB CDC |
-| BLE | antenna | Hardware may be present; **out of scope** — product uses Wi-Fi only |
-| ESP32 onboard USB-C | — | Unused when 5993 supplies power + data |
+| UART0 | XIAO D6/D7 (GPIO43/44); C3-Zero GPIO21/20 | Console is USB CDC |
+| Touch / button | XIAO D1 / GPIO2 | Reserved for a future input |
+| BLE | antenna | Hardware present; **out of scope** — product uses Wi-Fi only |

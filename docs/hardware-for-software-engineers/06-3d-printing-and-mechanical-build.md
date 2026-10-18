@@ -1,6 +1,6 @@
 # 3D printing and mechanical build
 
-Software lives in repos; hardware lives in **enclosures**. 3D printing is how you turn CAD into a physical body — layer by layer, with tolerances that bite if you ignore them. If you've never printed, this chapter is the missing semester: materials, fit, CAD source, and not destroying a servo by forcing it into a tight pocket. **Tiny Engineer** is the case study; the skills transfer to any printed mount or case.
+Software lives in repos; hardware lives in **enclosures**. 3D printing is how you turn CAD into a physical body — layer by layer, with tolerances that bite if you ignore them. If you've never printed, this chapter is the missing semester: materials, fit, CAD source, and not destroying a servo by forcing it into a tight pocket. **Vibe Bot** is the case study; the skills transfer to any printed mount or case.
 
 ---
 

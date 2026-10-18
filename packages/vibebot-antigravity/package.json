@@ -1,0 +1,15 @@
+{
+  "name": "vibebot-antigravity",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Antigravity CLI lifecycle hook helper for Vibe Bot robot animations",
+  "main": "src/cli.js",
+  "bin": {
+    "vibebot-antigravity": "./bin/vibebot-antigravity.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["antigravity", "antigravity-cli", "robot", "vibebot"],
+  "license": "MIT"
+}

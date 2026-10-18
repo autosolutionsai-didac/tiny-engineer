@@ -1,6 +1,6 @@
 # Wiring craft and schematics
 
-Software has stack traces. Hardware has smoke. Most beginner failures aren't mysterious — they're a loose GND, swapped data lines, or a wire that pulled out when you closed the case. This chapter is about making connections you can trust and reading the diagram — Tiny Engineer's drawing is the practice artifact.
+Software has stack traces. Hardware has smoke. Most beginner failures aren't mysterious — they're a loose GND, swapped data lines, or a wire that pulled out when you closed the case. This chapter is about making connections you can trust and reading the diagram — Vibe Bot's drawing is the practice artifact.
 
 ---
 
@@ -45,7 +45,7 @@ You don't need a full EE schematic. You need the **block diagram** mindset:
 - **Lines** = nets (SDA, SCL, 5V, GND)
 - **Same net name** = must be connected together
 
-Tiny Engineer's map: [Tiny Engineer.drawio.png](../wiring/Tiny%20Engineer.drawio.png).
+Vibe Bot's map: [legacy-c3-zero.drawio.png](../wiring/legacy-c3-zero.drawio.png).
 
 > **If you've written backend code…** The PNG is an architecture diagram. [wiring.md](../hardware/wiring.md) is the connection table. [pinout.md](../hardware/pinout.md) is GPIO allocation. Same system, three views.
 
@@ -82,9 +82,9 @@ Assembly checks before first power: [wiring.md](../hardware/wiring.md) — read 
 
 ---
 
-## In Tiny Engineer
+## In Vibe Bot
 
-Use [Tiny Engineer.drawio.png](../wiring/Tiny%20Engineer.drawio.png) as your map and [wiring.md](../hardware/wiring.md) as your checklist. This guide doesn't duplicate the connection table.
+Use [legacy-c3-zero.drawio.png](../wiring/legacy-c3-zero.drawio.png) as your map and [wiring.md](../hardware/wiring.md) as your checklist. This guide doesn't duplicate the connection table.
 
 **Desk smoke order** (wiring mindset — after wire + flash, before the mechanical run):
 1. USB power + GND only → ESP32 boots (LED, serial)
@@ -99,4 +99,4 @@ Use [Tiny Engineer.drawio.png](../wiring/Tiny%20Engineer.drawio.png) as your map
 
 **Next:** [Buses and protocols](04-buses-and-protocols.md)
 
-**Reference:** [hardware/wiring.md](../hardware/wiring.md) · [wiring/Tiny Engineer.drawio.png](../wiring/Tiny%20Engineer.drawio.png)
+**Reference:** [hardware/wiring.md](../hardware/wiring.md) · [wiring/legacy-c3-zero.drawio.png](../wiring/legacy-c3-zero.drawio.png)

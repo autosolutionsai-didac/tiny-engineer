@@ -1,6 +1,6 @@
 # Microcontrollers and ESP32
 
-Your laptop runs Linux, Chrome, and seventeen Slack notifications. A microcontroller runs *one program*, forever, with no OS you recognize. That gap — between "real computer" and "chip that drives GPIO" — is where most software engineers stall. This chapter closes it. Tiny Engineer uses an **ESP32-C3** as its instance; the ideas apply to Arduino, STM32, and most hobby boards.
+Your laptop runs Linux, Chrome, and seventeen Slack notifications. A microcontroller runs *one program*, forever, with no OS you recognize. That gap — between "real computer" and "chip that drives GPIO" — is where most software engineers stall. This chapter closes it. Vibe Bot uses an **ESP32-C3** as its instance; the ideas apply to Arduino, STM32, and most hobby boards.
 
 ---
 
@@ -15,7 +15,7 @@ Your laptop runs Linux, Chrome, and seventeen Slack notifications. A microcontro
 | Real-time I/O | Designed for it | Possible, awkward | Not the point |
 | Power | Milliwatts to low watts | Watts | Tens of watts |
 
-Tiny Engineer needs Wi-Fi, five servos, a display, and audio on a desk robot budget. An MCU with built-in radio fits. A Pi would work but adds OS overhead, boot time, and power for no gain here.
+Vibe Bot needs Wi-Fi, five servos, a display, and audio on a desk robot budget. An MCU with built-in radio fits. A Pi would work but adds OS overhead, boot time, and power for no gain here.
 
 ---
 
@@ -67,7 +67,7 @@ You're not writing bare-metal RISC-V assembly. You're writing C++ that compiles 
 
 ## ESP32 family (just enough context)
 
-Espressif makes many ESP32 variants. Tiny Engineer uses **ESP32-C3**:
+Espressif makes many ESP32 variants. Vibe Bot uses the **ESP32-S3** (Seeed Studio XIAO ESP32S3: dual-core Xtensa LX7, 8 MB flash, 8 MB PSRAM). The legacy build — and the rest of this chapter's examples — use the **ESP32-C3**:
 
 - **RISC-V** single-core (not the older dual-core Xtensa ESP32)
 - **Wi-Fi 2.4 GHz only** — no 5 GHz; your router must expose 2.4 GHz for setup
@@ -76,9 +76,11 @@ Espressif makes many ESP32 variants. Tiny Engineer uses **ESP32-C3**:
 
 ---
 
-## In Tiny Engineer
+## In Vibe Bot
 
-### The board: Waveshare ESP32-C3-Zero
+### The board: Waveshare ESP32-C3-Zero (legacy)
+
+> Vibe Bot's default board is the **Seeed Studio XIAO ESP32S3** (env `xiao-esp32s3`): no onboard RGB LED; it drives a 9-LED WS2812B chain on D0 / GPIO1 through a 74AHCT1G125 level shifter instead. See [pinout.md](../hardware/pinout.md). The C3-Zero walkthrough below still applies to the legacy env `esp32-c3-devkitm-1`.
 
 Not a generic breadboard devkit. It's a compact module with castellated edges, a ceramic antenna, and an onboard RGB LED.
 

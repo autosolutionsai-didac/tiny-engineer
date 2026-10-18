@@ -1,6 +1,6 @@
 # Assets
 
-Source files for Tiny Engineer branding and speaker clips. Firmware does not read this folder at runtime.
+Source files for Vibe Bot speaker clips (inherited from the upstream Tiny Engineer project by Krzysztof Jamroz). Firmware does not read this folder at runtime.
 
 ## Audio
 
@@ -21,4 +21,6 @@ Animation timing is synced to these clips. After replacing a file, check the mat
 
 ## Logo
 
-[`logo/tiny_engineer_logo.svg`](logo/tiny_engineer_logo.svg) — wordmark (Inkscape, 180×80 mm). Branding only; not copied to LittleFS.
+A Vibe Bot logo is TBD.
+
+[`logo/tiny_engineer_logo.svg`](logo/tiny_engineer_logo.svg) is the **upstream Tiny Engineer wordmark** (a reserved mark — [TRADEMARK.md](../TRADEMARK.md)). It is kept unchanged for attribution history only; do **not** use it as Vibe Bot branding. Not copied to LittleFS.

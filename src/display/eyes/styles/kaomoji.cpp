@@ -2,14 +2,14 @@
 #include "display/eyes/styles/kaomoji.h"
 
 #include <Adafruit_SSD1306.h>
-#include <TinyEngineerExpressions.h>
+#include <VibeBotExpressions.h>
 
 #include "display/oled.h"
 #include "display/oled_internal.h"
 
 namespace {
 
-namespace expressions = tiny_engineer::expressions;
+namespace expressions = vibebot::expressions;
 
 uint8_t g_kaomojiFrame[expressions::kFrameBytes];
 expressions::Expression g_activeExpression = expressions::Expression::Idle;

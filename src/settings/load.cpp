@@ -20,6 +20,7 @@ void initSettings() {
   fillDefaultServoRanges(g_servoMin, g_servoMax);
   setRgbOrderCache(g_rgbOrder, SETTINGS_DEFAULT_RGB_ORDER);
   g_oledRotate180 = SETTINGS_DEFAULT_OLED_ROTATE_180;
+  g_agentdeck = SETTINGS_DEFAULT_AGENTDECK;
 
   if (!settingsNvsBeginRead()) {
     serialLogPrintln("Settings: NVS open failed; using defaults");
@@ -134,6 +135,8 @@ void initSettings() {
     kKeyOledRot,
     SETTINGS_DEFAULT_OLED_ROTATE_180
   );
+
+  g_agentdeck = g_settingsPrefs.getBool(kKeyAgentDeck, SETTINGS_DEFAULT_AGENTDECK);
 
   settingsNvsEnd();
 

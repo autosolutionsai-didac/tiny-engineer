@@ -125,6 +125,28 @@ bool settingsValidateServoRanges(
   return true;
 }
 
+bool settingsParseAgentDeck(const char* value, bool* enabled) {
+  if (value == nullptr) {
+    return false;
+  }
+
+  bool on = false;
+
+  if (strcmp(value, "on") == 0 || strcmp(value, "1") == 0) {
+    on = true;
+  } else if (strcmp(value, "off") == 0 || strcmp(value, "0") == 0) {
+    on = false;
+  } else {
+    return false;
+  }
+
+  if (enabled != nullptr) {
+    *enabled = on;
+  }
+
+  return true;
+}
+
 bool settingsValidateRgbOrder(const char* rgbOrder) {
   if (rgbOrder == nullptr) {
     return false;

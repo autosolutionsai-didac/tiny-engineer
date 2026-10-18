@@ -6,15 +6,15 @@ body:
   - type: markdown
     attributes:
       value: |
-        Same robot API for every client: `POST /anim?name=…`. See [docs/integration.md](https://github.com/jamro/tiny-engineer/blob/main/docs/integration.md).
+        Same robot API for every client: `POST /anim?name=…`. See [docs/integration.md](https://github.com/autosolutionsai-didac/tiny-engineer/blob/main/docs/integration.md).
         Clients should use a short timeout (about 2s) and ignore network errors so a missing robot does not stall the agent.
   - type: dropdown
     id: path
     attributes:
       label: Path
       options:
-        - Cursor hooks (`tiny-engineer-cursor`)
-        - Antigravity CLI (`tiny-engineer-antigravity`)
+        - Cursor hooks (`vibebot-cursor`)
+        - Antigravity CLI (`vibebot-antigravity`)
         - Raw REST / curl / other agent
     validations:
       required: true
