@@ -1,0 +1,104 @@
+# Critical net -> pin memberships for review (xiao-main-board).
+# Tokens = KiCad netlist RefDes.PinNum:PinName (pin number + symbol pin name).
+# Compare with: kicad-cli sch export netlist  (python3 scripts/check_pcb.py xiao-main-board)
+# See docs/pcb.md#expected-netsyml
+# All named nets are listed; intentionally open pins: U1.3 D2 (strapping), J3.4 GAIN, J3.5 SD, J5.1/J5.2 (5993 D+/D-).
+
+nets:
+  # 5 V rail: inputs J5 (5993 VBUS) / J6 (terminal), servo V+ on both PCA9685 headers, amp VIN, LED chain, buffer, bulk caps, SS14 anode
+  "+5V":
+    - C1.1:1
+    - C2.1:1
+    - C3.1:1
+    - D1.2:A
+    - J1.1:Pin_1
+    - J2.1:Pin_1
+    - J3.7:Pin_7
+    - J5.3:Pin_3
+    - J6.1:Pin_1
+    - J7.1:Pin_1
+    - U2.5:VCC
+  # SS14 cathode -> XIAO 5V pin (rail never back-feeds the XIAO USB host)
+  "+5V_XIAO":
+    - D1.1:K
+    - U1.14:5V
+  # XIAO 3V3 regulator -> PCA9685 VCC (logic), OLED, optional DNP pull-ups
+  "+3V3":
+    - J1.2:Pin_2
+    - J2.2:Pin_2
+    - J4.1:Pin_1
+    - R2.1:1
+    - R3.1:1
+    - U1.12:3V3
+  # common ground
+  "GND":
+    - C1.2:2
+    - C2.2:2
+    - C3.2:2
+    - J1.6:Pin_6
+    - J2.6:Pin_6
+    - J3.6:Pin_6
+    - J4.2:Pin_2
+    - J5.4:Pin_4
+    - J6.2:Pin_2
+    - J7.3:Pin_3
+    - J8.2:Pin_2
+    - J9.3:Pin_3
+    - U1.13:GND
+    - U2.1:1
+    - U2.3:GND
+  # XIAO D4 (GPIO5)
+  "I2C_SDA":
+    - J1.3:Pin_3
+    - J2.3:Pin_3
+    - J4.3:Pin_3
+    - R2.2:2
+    - U1.5:D4/SDA
+  # XIAO D5 (GPIO6)
+  "I2C_SCL":
+    - J1.4:Pin_4
+    - J2.4:Pin_4
+    - J4.4:Pin_4
+    - R3.2:2
+    - U1.6:D5/SCL
+  # XIAO D3 (GPIO4), active low
+  "PCA_OE":
+    - J1.5:Pin_5
+    - J2.5:Pin_5
+    - U1.4:D3
+  # XIAO D8 (GPIO7)
+  "I2S_BCLK":
+    - J3.2:Pin_2
+    - U1.9:D8/SCK
+  # XIAO D9 (GPIO8)
+  "I2S_LRC":
+    - J3.1:Pin_1
+    - U1.10:D9/MISO
+  # XIAO D10 (GPIO9)
+  "I2S_DIN":
+    - J3.3:Pin_3
+    - U1.11:D10/MOSI
+  # XIAO D0 (GPIO1) -> 74AHCT1G125 A
+  "LED_DIN_3V3":
+    - U1.1:D0
+    - U2.2:2
+  # 74AHCT1G125 Y -> 330R
+  "LED_DOUT_5V":
+    - R1.1:1
+    - U2.4:4
+  # 330R -> JST data
+  "LED_DATA":
+    - J7.2:Pin_2
+    - R1.2:2
+  # XIAO D1 (GPIO2), reserved
+  "TOUCH_D1":
+    - J8.1:Pin_1
+    - U1.2:D1
+  # XIAO D6 (GPIO43)
+  "UART_TX":
+    - J9.1:Pin_1
+    - U1.7:D6/TX
+  # XIAO D7 (GPIO44)
+  "UART_RX":
+    - J9.2:Pin_2
+    - U1.8:D7/RX

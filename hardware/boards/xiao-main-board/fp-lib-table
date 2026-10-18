@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "XiaoMainBoard") (type "KiCad") (uri "${KIPRJMOD}/libraries/footprints/xiao_main_board.pretty") (options "") (descr "Project-local footprints for xiao-main-board"))
+)

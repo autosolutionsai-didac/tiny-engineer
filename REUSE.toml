@@ -44,3 +44,8 @@ SPDX-License-Identifier = "CERN-OHL-S-2.0"
 path = "src/sessions/agentdeck_client.cpp"
 SPDX-FileCopyrightText = ["2026 Krzysztof Jamroz", "2025 SerendipityBound (AgentDeck, adapted mDNS/WebSocket client)"]
 SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "hardware/boards/xiao-main-board/**"
+SPDX-FileCopyrightText = ["2026 Krzysztof Jamroz", "2026 Didac Fernandez Girona"]
+SPDX-License-Identifier = "CERN-OHL-S-2.0"
