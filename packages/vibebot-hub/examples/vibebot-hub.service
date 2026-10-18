@@ -1,0 +1,30 @@
+# vibebot-hub as a systemd *user* service (starts at login, restarts on failure).
+#
+#   mkdir -p ~/.config/systemd/user ~/.config/vibebot
+#   cp vibebot-hub.service ~/.config/systemd/user/
+#   # optional settings (keep it private: chmod 600 ~/.config/vibebot/hub.env)
+#   printf 'VIBEBOT_URL=http://tiny-engineer.local\n#VIBEBOT_TOKEN=your-access-token\n' > ~/.config/vibebot/hub.env
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now vibebot-hub
+#   journalctl --user -u vibebot-hub -f
+#
+# Edit ExecStart: absolute path to node (`which node`) and to this repo's
+# packages/vibebot-hub/bin/vibebot-hub.js (or the global `vibebot-hub` bin).
+# Add `--port 17825` to serve the Vibe Deck extensions unchanged.
+# systemd sends SIGTERM on stop; the hub posts state=ended for every session.
+
+[Unit]
+Description=Vibe Bot hub (coding-agent sessions -> robot)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=-%h/.config/vibebot/hub.env
+ExecStart=/usr/bin/node %h/tiny-engineer/packages/vibebot-hub/bin/vibebot-hub.js
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target

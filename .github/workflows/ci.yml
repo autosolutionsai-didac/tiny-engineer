@@ -55,6 +55,8 @@ jobs:
         run: npm test --prefix packages/tiny-engineer-antigravity
       - name: Claude Code package tests
         run: npm test --prefix packages/tiny-engineer-claude-code
+      - name: Vibe Bot hub package tests
+        run: npm test --prefix packages/vibebot-hub
 
   pcb:
     runs-on: ubuntu-24.04

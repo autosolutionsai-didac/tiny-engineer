@@ -1,0 +1,24 @@
+{
+  "name": "vibebot-hub",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Local hub that turns coding-agent hook events (Claude Code, Cursor, Codex, Antigravity, Vibe Deck extensions) into robot POST /session updates",
+  "main": "src/hub.js",
+  "bin": {
+    "vibebot-hub": "./bin/vibebot-hub.js",
+    "vibebot-send": "./bin/vibebot-send.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "files": [
+    "bin",
+    "src",
+    "examples"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["claude-code", "cursor", "codex", "antigravity", "robot", "tiny-engineer"],
+  "license": "MIT"
+}

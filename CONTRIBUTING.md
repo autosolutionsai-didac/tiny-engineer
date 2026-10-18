@@ -44,6 +44,7 @@ node scripts/expressions/test-assets.js
 npm test --prefix packages/tiny-engineer-cursor
 npm test --prefix packages/tiny-engineer-antigravity
 npm test --prefix packages/tiny-engineer-claude-code
+npm test --prefix packages/vibebot-hub
 python3 scripts/check_pcb.py
 ```
 

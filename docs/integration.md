@@ -1,10 +1,10 @@
 # Integrating Tiny Engineer
 
-Tiny Engineer is a Wi-Fi desk robot. Drive it from any tool that can make HTTP requests, or use one of the dedicated helpers (Cursor, Antigravity, Claude Code) that map agent hook events to poses.
+Tiny Engineer is a Wi-Fi desk robot. Drive it from any tool that can make HTTP requests, use one of the dedicated helpers (Cursor, Antigravity, Claude Code) that map agent hook events to poses, or run the session hub to show several agents at once.
 
 Robot must be on the same network. Base URL: `http://tiny-engineer.local` (or the IP shown on the OLED). Full HTTP reference: [`api.md`](api.md).
 
-Four integration paths:
+Five integration paths:
 
 | Path | Best for | How |
 |---|---|---|
@@ -12,6 +12,7 @@ Four integration paths:
 | **Cursor CLI** | Cursor project hooks | `npx` → `tiny-engineer-cursor` |
 | **Antigravity CLI** | Antigravity CLI lifecycle hooks | `tiny-engineer-antigravity` |
 | **Claude Code CLI** | Claude Code project hooks | `tiny-engineer-claude-code` |
+| **Session hub** | Several agents / windows at once (Claude Code, Cursor, Codex, Antigravity, Vibe Deck extensions) | `vibebot-hub` + `vibebot-send` → `POST /session` |
 
 ```mermaid
 flowchart TB
@@ -247,13 +248,96 @@ echo '{"hook_event_name":"Stop"}' | node packages/tiny-engineer-claude-code/bin/
 
 ---
 
+## 5. Session hub (several agents at once)
+
+The `/anim` helpers above each drive one pose and know nothing about each other. [`packages/vibebot-hub`](../packages/vibebot-hub/) runs one local hub on `127.0.0.1:17826`. It collects events from every agent on the machine, keeps a session table (up to 8, one LED each), and pushes it to the robot with `POST /session?id=&state=&activity=&agent=&label=`. The robot arbitrates the pose: any waiting → `attention`; any error → `error`; working → `typing|reading|thinking`; working → idle → `ring`.
+
+```mermaid
+flowchart LR
+  CC[Claude Code hooks] --> Send["vibebot-send agent"]
+  CU[Cursor hooks] --> Send
+  CX[Codex hooks / notify] --> Send
+  AG[Antigravity hooks] --> Send
+  Send -->|"POST /hook/agent (1 s, silent, exit 0)"| Hub["vibebot-hub 127.0.0.1:17826"]
+  VS[Vibe Deck VS Code] -->|POST /vscode/register| Hub
+  CR[Vibe Deck Chrome] -->|POST /event| Hub
+  Hub -->|"POST /session (≤ 4/s, 60 s keepalive)"| Robot[Robot]
+  AD[AgentDeck daemon] -.->|"WebSocket, mDNS _agentdeck._tcp"| Robot
+```
+
+**Alternative, no hub:** if you already run the [AgentDeck](https://github.com/puritysb/AgentDeck) daemon, the robot discovers it over mDNS and follows its sessions over WebSocket (setting `agentdeck=on`, the default). Hub and AgentDeck can run together; the robot merges both sources.
+
+### Setup
+
+```bash
+npm install -g ./packages/vibebot-hub          # vibebot-hub + vibebot-send on PATH
+vibebot-hub --robot http://tiny-engineer.local  # VIBEBOT_URL / TINY_ENGINEER_URL also work
+```
+
+- Auth: `VIBEBOT_TOKEN` (else `TINY_ENGINEER_TOKEN`) is sent as `Authorization: Bearer …` and never logged.
+- Run at login: [launchd plist](../packages/vibebot-hub/examples/com.vibebot.hub.plist) (macOS) or [systemd user unit](../packages/vibebot-hub/examples/vibebot-hub.service) (Linux). On SIGTERM the hub posts `state=ended` for every session.
+- Hub status: `curl http://127.0.0.1:17826/sessions` and `/health`.
+- `vibebot-send` never writes to stdout, which Claude Code and Codex would feed to the model, and always exits 0 within about 1 s, even when the hub is down. The one exception is Antigravity, which gets the decision JSON it requires.
+- Use the hub **or** the `/anim` helpers for a given agent, not both.
+
+### Hook snippets
+
+Claude Code, `~/.claude/settings.json`: add the same entry under `SessionStart`, `SessionEnd`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `SubagentStart`, `PreCompact`, `PermissionRequest`, `Notification`, `Stop` and `StopFailure`:
+
+```json
+{ "hooks": { "Stop": [{ "hooks": [{ "type": "command", "command": "vibebot-send claude-code", "async": true }] }] } }
+```
+
+Cursor, `~/.cursor/hooks.json` (same entry per event: `sessionStart`, `sessionEnd`, `beforeSubmitPrompt`, `afterAgentThought`, `preCompact`, `preToolUse`, `postToolUse`, `postToolUseFailure`, `beforeReadFile`, `beforeShellExecution`, `subagentStart`, `afterFileEdit`, `stop`):
+
+```json
+{ "version": 1, "hooks": { "stop": [{ "command": "vibebot-send cursor", "timeout": 2 }] } }
+```
+
+Antigravity, `~/.gemini/config/hooks.json` (hook type as the second argument):
+
+```json
+{
+  "vibebot": {
+    "PreInvocation": [{ "command": "vibebot-send antigravity PreInvocation", "timeout": 3 }],
+    "PreToolUse":    [{ "matcher": "*", "hooks": [{ "command": "vibebot-send antigravity PreToolUse", "timeout": 3 }] }],
+    "PostToolUse":   [{ "matcher": "*", "hooks": [{ "command": "vibebot-send antigravity PostToolUse", "timeout": 3 }] }],
+    "Stop":          [{ "command": "vibebot-send antigravity Stop", "timeout": 3 }]
+  }
+}
+```
+
+Codex, `~/.codex/config.toml`. `notify` (turn complete) must come before any table. Lifecycle hooks add working, waiting and ended, and need a one-time `/hooks` trust inside Codex:
+
+```toml
+notify = ["vibebot-send", "codex"]
+
+[features]
+hooks = true
+
+[[hooks.PreToolUse]]
+matcher = "*"
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "vibebot-send codex"
+timeout = 3
+# repeat for SessionStart, UserPromptSubmit, PostToolUse, PermissionRequest, Stop, SessionEnd
+```
+
+Vibe Deck extensions: the VS Code extension (`/vscode/register`) and the Chrome extension (`/event`) hardcode `127.0.0.1:17825`. When the Vibe Deck daemon is not running, start `vibebot-hub --port 17825` and both work unchanged. Then set `VIBEBOT_HUB_PORT=17825` for the hook shims too.
+
+Full event → state tables, hub routes and behaviour: [`packages/vibebot-hub/README.md`](../packages/vibebot-hub/README.md).
+
+---
+
 ## Which to choose?
 
 - **Building for one IDE / custom agent** → REST. One `POST`, zero Node dependency.
 - **Using Cursor and want zero mapping code** → Cursor CLI + hooks.
 - **Using Antigravity CLI** → Antigravity CLI + hooks.
 - **Using Claude Code** → Claude Code CLI + hooks.
-- **All four** are fine together: the CLIs are thin clients of the same `/anim` API.
+- **Several agents or windows at once** → session hub (`vibebot-hub`), or the AgentDeck daemon with no hub.
+- **The four `/anim` paths** are fine together: the CLIs are thin clients of the same `/anim` API. The session hub replaces them for the agents it covers.
 
 Prerequisites for any path: flash firmware, join 2.4 GHz Wi-Fi, confirm `http://tiny-engineer.local/health` (or the OLED IP) responds.
 
@@ -261,4 +345,4 @@ Prerequisites for any path: flash firmware, join 2.4 GHz Wi-Fi, confirm `http://
 
 ## Optional extras
 
-Same `POST /anim` API; not part of the four paths above. On macOS you can run a small host helper that POSTs `sleep` / `wakeup` when the screen locks or unlocks: [`macos-lock-unlock.md`](macos-lock-unlock.md). The robot does not need it.
+Same `POST /anim` API; not part of the paths above. On macOS you can run a small host helper that POSTs `sleep` / `wakeup` when the screen locks or unlocks: [`macos-lock-unlock.md`](macos-lock-unlock.md). The robot does not need it.

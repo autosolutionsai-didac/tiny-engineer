@@ -33,6 +33,7 @@ Node 18+. No robot.
 npm test --prefix packages/tiny-engineer-cursor
 npm test --prefix packages/tiny-engineer-antigravity
 npm test --prefix packages/tiny-engineer-claude-code
+npm test --prefix packages/vibebot-hub
 ```
 
 ## PCB

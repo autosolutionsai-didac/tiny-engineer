@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  vibebot-hub as a macOS LaunchAgent (starts at login, restarts if it dies).
+
+  1. Edit the two paths below: your `node` (run `which node`) and this repo's
+     packages/vibebot-hub/bin/vibebot-hub.js (or the global `vibebot-hub` bin).
+  2. Set VIBEBOT_URL if the robot is not at http://tiny-engineer.local.
+     If the robot has an access_token, add VIBEBOT_TOKEN below and keep this
+     file private: chmod 600 ~/Library/LaunchAgents/com.vibebot.hub.plist
+  3. cp com.vibebot.hub.plist ~/Library/LaunchAgents/
+     launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.vibebot.hub.plist
+     Stop / remove:
+     launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.vibebot.hub.plist
+
+  launchd sends SIGTERM on bootout/logout; the hub then posts state=ended for
+  every session before it exits.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.vibebot.hub</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/node</string>
+    <string>/Users/YOU/tiny-engineer/packages/vibebot-hub/bin/vibebot-hub.js</string>
+    <!-- Use 17825 instead to serve the Vibe Deck extensions unchanged
+         (only when the Vibe Deck daemon is not running):
+    <string>&#45;&#45;port</string>
+    <string>17825</string>
+    -->
+  </array>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>VIBEBOT_URL</key>
+    <string>http://tiny-engineer.local</string>
+    <!--
+    <key>VIBEBOT_TOKEN</key>
+    <string>your-access-token</string>
+    -->
+  </dict>
+
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+
+  <key>StandardErrorPath</key>
+  <string>/tmp/vibebot-hub.log</string>
+  <key>StandardOutPath</key>
+  <string>/tmp/vibebot-hub.log</string>
+</dict>
+</plist>
